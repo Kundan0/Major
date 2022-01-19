@@ -62,7 +62,7 @@ def fit(epochs,model,train_dl_device,learning_rate,optim=torch.optim.SGD):
             print("average_Loss for last 50 batches",np.average(history[-50:]))
         
             
-            
+#comments added for branch2            
         
         
 
