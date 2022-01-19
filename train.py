@@ -1,6 +1,6 @@
 import torch
 import os
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader,random_split
 from ClassData import myDataset
 from ClassModel import myModel
 from DeviceData import DeviceDataLoader
@@ -27,13 +27,21 @@ an_dir=os.path.join(PATH,"Annotations")
 json_dir=os.path.join(PATH,json_name)
 
 dataset=myDataset(json_dir,depth_dir,of_dir,an_dir)
-train_dl=DataLoader(dataset,batch_size=64,shuffle=False)
+dataset_size=len(dataset)
+train_size=int(dataset_size*0.9)
+train_ds, val_ds = random_split(dataset, [train_size,dataset_size-train_size])
+train_dl=DataLoader(train_ds,batch_size=4,shuffle=True)
+val_dl=DataLoader(val_ds,batch_size=1,shuffle=True)
 
-train_dl_device=DeviceDataLoader(train_dl,device)
+train_dl=DeviceDataLoader(train_dl,device)
+val_dl=DeviceDataLoader(val_dl,device)
 
 model=myModel().to(device)
-
-def fit(epochs,model,train_dl_device,learning_rate,optim=torch.optim.SGD):
+def evaluate(model, val_dl):
+    model.eval()
+    outputs = [model.validation_step(batch) for batch in val_dl]
+    return model.validation_epoch_end(outputs)
+def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
     optimizer=optim(model.parameters(),learning_rate)
     
     
@@ -46,7 +54,7 @@ def fit(epochs,model,train_dl_device,learning_rate,optim=torch.optim.SGD):
     for ep in range(epochs):
         print("epoch",ep)
         history=[]
-        for idx,batch in enumerate(train_dl_device):
+        for idx,batch in enumerate(train_dl):
             print("idx",idx)
             optimizer.zero_grad()
             loss=model.training_step(batch)
@@ -60,13 +68,14 @@ def fit(epochs,model,train_dl_device,learning_rate,optim=torch.optim.SGD):
                 print("saving model")
             history.append(l)
             print("average_Loss for last 50 batches",np.average(history[-50:]))
-        
-            
+        print("evaluation  model ... wait ")
+        result=evaluate(model,val_dl)
+        print("validation loss",result['val_loss'])    
 #comments added for branch2            
         
         
 
-fit(10,model,train_dl_device,0.001,torch.optim.Adam)
+fit(10,model,train_dl,val_dl,0.00001,torch.optim.Adam)
 
 
 
