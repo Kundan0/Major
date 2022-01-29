@@ -1,0 +1,6 @@
+[submodule "AdaBins"]
+	path = AdaBins
+	url = https://github.com/Kundan0/AdaBins.git
+[submodule "RAFT"]
+	path = RAFT
+	url = https://github.com/princeton-vl/RAFT.git

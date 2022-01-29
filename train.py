@@ -50,10 +50,19 @@ def plot_losses():
     plt.ylabel('loss')
     plt.legend(['Training', 'Validation'])
     plt.title('Loss vs. No. of epochs')
+
 def evaluate(model, val_dl):
     model.eval()
-    outputs = [model.validation_step(batch) for batch in val_dl]
+    outputs=[]
+    for idx,batch in enumerate(val_dl):
+      print("validating batch number ",idx+1)
+      output=model.validation_step(batch)
+      outputs.append(output)
+      print(outputs)
+      print("finished index ",idx+1)
+    
     return model.validation_epoch_end(outputs)
+
 
 def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
     optimizer=optim(model.parameters(),learning_rate)
