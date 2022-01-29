@@ -40,11 +40,11 @@ train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
 
 model=myModel().to(device)
-history=[]
+train_loss=[]
 validation_loss=[]
 def plot_losses():
     
-    plt.plot(history, '-bx')
+    plt.plot(train_loss, '-bx')
     plt.plot(validation_loss, '-rx')
     plt.xlabel('epoch')
     plt.ylabel('loss')
@@ -64,32 +64,38 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
         print("Loading Model ...")
     except:
         print("Cannot Load")
-
+    print("evaluation  model ... wait ")
+    result=evaluate(model,val_dl)
+    print('result of evaluation',result['val_loss'])
     for ep in range(epochs):
         print("epoch",ep)
-        
+        model.train()
+        train_losses=[]
         for idx,batch in enumerate(train_dl):
+            
             print("idx",idx)
             optimizer.zero_grad()
             loss=model.training_step(batch)
-            l=loss.detach().cpu().item()
+            l=loss.detach()
             print("loss",l)
             loss.backward()
             optimizer.step() 
-            history.append(l)
-            print("average_Loss for last 50 batches",np.average(history[-50:]))
-        torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
+            train_losses.append(l)
+            print("average_Loss for last 20 batches",np.average(train_losses[-20:]))
         print("saving model")
+        torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
+        print("saved ")
         print("evaluation  model ... wait ")
         result=evaluate(model,val_dl)
+        train_loss.append(torch.stack(train_losses).mean().item())
         validation_loss.append(result['val_loss'])
-        print("validation loss",result['val_loss'])
+        print("mean validation loss",result['val_loss'])
             
 #comments added for branch2            
         
         
 
-fit(10,model,train_dl,val_dl,0.0001,torch.optim.Adam)
+fit(15,model,train_dl,val_dl,0.0001,torch.optim.Adam)
 
 plot_losses()
 
