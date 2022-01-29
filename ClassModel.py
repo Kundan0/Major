@@ -47,3 +47,4 @@ class myModel(nn.Module):
         batch_losses = [x['val_loss'] for x in outputs]
         epoch_loss = torch.stack(batch_losses).mean()   # Combine losses
     
+        
