@@ -65,12 +65,10 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
             print("loss",l)
             loss.backward()
             optimizer.step() 
-            if idx % 50 ==0 and idx!=0:
-                
-                torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
-                print("saving model")
             history.append(l)
             print("average_Loss for last 50 batches",np.average(history[-50:]))
+        torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
+        print("saving model")
         print("evaluation  model ... wait ")
         result=evaluate(model,val_dl)
         print("validation loss",result['val_loss'])    
