@@ -5,13 +5,13 @@ from ClassData import myDataset
 from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
-
+import matplotlib.pyplot as plt
 PATH=os.path.join("/content","drive","MyDrive")
 PATHJ=os.path.join("/content","Major")
 
 #PATH=os.curdir
 
-learn_type=2
+learn_type=3
 if learn_type==1:
     model_name="trained1"
     json_name="JSONa.json"
@@ -40,10 +40,21 @@ train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
 
 model=myModel().to(device)
+history=[]
+validation_loss=[]
+def plot_losses():
+    
+    plt.plot(history, '-bx')
+    plt.plot(validation_loss, '-rx')
+    plt.xlabel('epoch')
+    plt.ylabel('loss')
+    plt.legend(['Training', 'Validation'])
+    plt.title('Loss vs. No. of epochs')
 def evaluate(model, val_dl):
     model.eval()
     outputs = [model.validation_step(batch) for batch in val_dl]
     return model.validation_epoch_end(outputs)
+
 def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
     optimizer=optim(model.parameters(),learning_rate)
     
@@ -56,7 +67,7 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
 
     for ep in range(epochs):
         print("epoch",ep)
-        history=[]
+        
         for idx,batch in enumerate(train_dl):
             print("idx",idx)
             optimizer.zero_grad()
@@ -71,13 +82,15 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
         print("saving model")
         print("evaluation  model ... wait ")
         result=evaluate(model,val_dl)
-        print("validation loss",result['val_loss'])    
+        validation_loss.append(result['val_loss'])
+        print("validation loss",result['val_loss'])
+            
 #comments added for branch2            
         
         
 
-fit(10,model,train_dl,val_dl,0.00001,torch.optim.Adam)
+fit(10,model,train_dl,val_dl,0.0001,torch.optim.Adam)
 
-
+plot_losses()
 
 
