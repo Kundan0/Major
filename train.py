@@ -60,13 +60,14 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
     
     
     try:
-        model.load_state_dict(torch.load(os.path.join(PATHJ,"State",model_name)))
         print("Loading Model ...")
+        model.load_state_dict(torch.load(os.path.join(PATHJ,"State",model_name)))
+        print("Successfully loaded the model")
     except:
-        print("Cannot Load")
-    print("evaluation  model ... wait ")
+        print("Cannot Load Model")
+    print("Performing Model Evaluation ... Wait ")
     result=evaluate(model,val_dl)
-    print('result of evaluation',result['val_loss'])
+    print('Result of Evaluation ,mean loss obtained ',result['val_loss'])
     for ep in range(epochs):
         print("epoch",ep)
         model.train()
@@ -89,7 +90,7 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
         result=evaluate(model,val_dl)
         train_loss.append(torch.stack(train_losses).mean().item())
         validation_loss.append(result['val_loss'])
-        print("mean validation loss",result['val_loss'])
+        print(f"mean validation loss for this epoch {ep}is {result['val_loss']}")
             
 #comments added for branch2            
         

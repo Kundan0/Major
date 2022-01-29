@@ -41,9 +41,12 @@ class myModel(nn.Module):
         image,label=batch
         result=self(image)
         loss=self.loss(result,label)
-        return {'validation_loss':loss.detach()}
+        print("val loss for this batch ",loss.detach())
+        return {'val_loss':loss.detach()}
     
     def validation_epoch_end(self, outputs):
+        print("calculating mean val loss")
         batch_losses = [x['val_loss'] for x in outputs]
         epoch_loss = torch.stack(batch_losses).mean()   # Combine losses
-    
+        print("calculated mean val loss",epoch_loss.item())
+        return {'val_loss':epoch_loss.item()}
