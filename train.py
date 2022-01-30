@@ -71,7 +71,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
     
     try:
         print("Loading Model ...")
-        optimizer,trained_epoch=model.load_model()
+        optimizer,trained_epoch=model.load_model(optimizer)
         print("starting from epoch ",trained_epoch)
         print("Successfully loaded the model")
     except:
