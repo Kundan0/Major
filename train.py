@@ -80,7 +80,9 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
     for ep in range(trained_epoch,epochs):
         print("epoch",ep)
         model.train()
-        
+        model.save_model(ep,optimizer)
+        optimizer,trained_epoch=model.load_model(optimizer)
+        print("successfully loaded ",trained_epoch)
         train_losses=[]
         for idx,batch in enumerate(train_dl):
             
