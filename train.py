@@ -59,8 +59,8 @@ def evaluate(model, val_dl):
       print("validating batch number ",idx+1)
       output=model.validation_step(batch)
       outputs.append(output)
-      print(outputs)
-      print("finished index ",idx+1)
+      
+      
     
     return model.validation_epoch_end(outputs)
 
@@ -72,6 +72,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
     try:
         print("Loading Model ...")
         optimizer,trained_epoch=model.load_model()
+        print("starting from epoch ",trained_epoch)
         print("Successfully loaded the model")
     except:
         trained_epoch=0
@@ -99,8 +100,8 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         print("Performing Model Evaluation   ... wait ")
         result=evaluate(model,val_dl)
         train_loss.append(torch.stack(train_losses).mean().item())
-        validation_loss.append(result['val_loss'])
-        print(f"mean validation loss for this epoch {ep}is {result['val_loss']}")
+        validation_loss.append(result)
+        print(f"mean validation loss for this epoch {ep}is {result}")
             
 #comments added for branch2            
         

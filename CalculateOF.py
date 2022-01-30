@@ -9,7 +9,7 @@ from PIL import Image
 
 file1="" #path1 here 
 file2="" #path2 here
-sys.path.append("/content/drive/MyDrive/Colab Notebooks/archive")
+sys.path.append("./g")
 from raft.core.raft import RAFT
 from raft.core.utils import flow_viz
 from raft.core.utils.utils import InputPadder

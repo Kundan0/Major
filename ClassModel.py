@@ -40,18 +40,18 @@ class myModel(nn.Module):
         return loss
     
     def validation_step(self,batch):
-        print('wait')
+        
         image,label=batch
         result=self(image)
         loss=self.loss(result,label)
-        print("val loss for this batch ",loss.detach())
+        print("val loss for this batch ",loss.detach().item())
         return loss.detach()
     
     def validation_epoch_end(self, outputs):
         print("calculating mean val loss")
         
         epoch_loss = torch.stack(outputs).mean()   # Combine losses
-        print("calculated mean val loss",epoch_loss.item())
+        
         return epoch_loss.item()
 
     def save_model(self,ep,optimizer):
