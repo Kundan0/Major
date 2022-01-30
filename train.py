@@ -11,7 +11,7 @@ PATHJ=os.path.join("/content","Major")
 
 #PATH=os.curdir
 
-learn_type=3
+learn_type=2
 if learn_type==1:
     model_name="trained1"
     json_name="JSONa.json"
@@ -74,9 +74,7 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
         print("Successfully loaded the model")
     except:
         print("Cannot Load Model")
-    print("Performing Model Evaluation ... Wait ")
-    result=evaluate(model,val_dl)
-    print('Result of Evaluation ,mean loss obtained ',result['val_loss'])
+    
     for ep in range(epochs):
         print("epoch",ep)
         model.train()
@@ -91,11 +89,11 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
             loss.backward()
             optimizer.step() 
             train_losses.append(l)
-            print("average_Loss for last 20 batches",np.average(train_losses[-20:]))
+            #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         print("saving model")
         torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
         print("saved ")
-        print("evaluation  model ... wait ")
+        print("Performing Model Evaluation   ... wait ")
         result=evaluate(model,val_dl)
         train_loss.append(torch.stack(train_losses).mean().item())
         validation_loss.append(result['val_loss'])
