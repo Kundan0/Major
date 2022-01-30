@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 class myModel(nn.Module):
     #hl_dims are hidden layer dimensions
-    def __init__(self,size=(128,72),hl_dim1=512,hl_dim2=256,hl_dim3=128,output_dims=4,loss=nn.MSELoss()):
+    def __init__(self,size=(128,72),hl_dim1=64,hl_dim2=64,hl_dim3=128,output_dims=4,loss=nn.MSELoss()):
         super().__init__()
         
         self.output_dims=output_dims
@@ -15,7 +15,9 @@ class myModel(nn.Module):
         self.loss=loss
         self.n1=nn.Sequential(
             
-            nn.Linear(5*self.size[0]*self.size[1],self.output_dims),
+            nn.Linear(5*self.size[0]*self.size[1],self.hl_dim1),
+            nn.Linear(self.hl_dim1,self.hl_dim2),
+            nn.Linear(self.hl_dim2,self.output_dims)
             
 
         )
