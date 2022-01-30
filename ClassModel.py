@@ -60,10 +60,10 @@ class myModel(nn.Module):
             'optimizer':optimizer.state_dict(),
             'model':self.state_dict(),
         }
-        torch.save(checkpoint,self.checkpoint_pth)
+        torch.save(checkpoint,self.checkpoint_path)
         
     def load_model(self,optimizer):
-        checkpoint=torch.load(self.checkpoint_pth)
+        checkpoint=torch.load(self.checkpoint_path)
         self.load_state_dict(checkpoint['model'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         return optimizer,checkpoint['epoch']
