@@ -38,8 +38,9 @@ val_dl=DataLoader(val_ds,batch_size=4,shuffle=True)
 
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
-learning_rate=0.0001
-model=myModel(torch.optim.Adam,learning_rate,os.path.join(PATHJ,"State",model_name)).to(device)
+lr_rate=0.0001
+chkpt_file_pth=os.path.join(PATHJ,"State",model_name)
+model=myModel(chkpt_file_pth).to(device)
 train_loss=[]
 validation_loss=[]
 def plot_losses():
@@ -64,13 +65,13 @@ def evaluate(model, val_dl):
     return model.validation_epoch_end(outputs)
 
 
-def fit(epochs,model,train_dl,val_dl):
-    optimizer=model.optimizer
+def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
+    optimizer=optim(model.parameters(),learning_rate)
     
     
     try:
         print("Loading Model ...")
-        trained_epoch=model.load_model()
+        optimizer,trained_epoch=model.load_model()
         print("Successfully loaded the model")
     except:
         trained_epoch=0
@@ -105,7 +106,7 @@ def fit(epochs,model,train_dl,val_dl):
         
         
 
-fit(15,model,train_dl,val_dl)
+fit(15,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
 
 plot_losses()
 
