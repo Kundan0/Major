@@ -38,8 +38,8 @@ val_dl=DataLoader(val_ds,batch_size=4,shuffle=True)
 
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
-
-model=myModel().to(device)
+learning_rate=0.0001
+model=myModel(torch.optim.Adam,learning_rate,os.path.join(PATHJ,"State",model_name)).to(device)
 train_loss=[]
 validation_loss=[]
 def plot_losses():
@@ -64,20 +64,22 @@ def evaluate(model, val_dl):
     return model.validation_epoch_end(outputs)
 
 
-def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
-    optimizer=optim(model.parameters(),learning_rate)
+def fit(epochs,model,train_dl,val_dl):
+    optimizer=model.optimizer
     
     
     try:
         print("Loading Model ...")
-        model.load_state_dict(torch.load(os.path.join(PATHJ,"State",model_name)))
+        trained_epoch=model.load_model()
         print("Successfully loaded the model")
     except:
+        trained_epoch=0
         print("Cannot Load Model")
     
-    for ep in range(epochs):
+    for ep in range(trained_epoch,epochs):
         print("epoch",ep)
         model.train()
+        
         train_losses=[]
         for idx,batch in enumerate(train_dl):
             
@@ -91,7 +93,7 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
             train_losses.append(l)
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         print("saving model")
-        torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
+        model.save_model(ep)
         print("saved ")
         print("Performing Model Evaluation   ... wait ")
         result=evaluate(model,val_dl)
@@ -103,7 +105,7 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
         
         
 
-fit(15,model,train_dl,val_dl,0.0001,torch.optim.Adam)
+fit(15,model,train_dl,val_dl)
 
 plot_losses()
 

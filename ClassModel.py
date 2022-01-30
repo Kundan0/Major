@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 class myModel(nn.Module):
     #hl_dims are hidden layer dimensions
-    def __init__(self,size=(128,72),hl_dim1=32,hl_dim2=256,hl_dim3=128,output_dims=4,loss=nn.MSELoss()):
+    def __init__(self,optim,learning_rate,checkpoint_pth,size=(128,72),hl_dim1=32,hl_dim2=256,hl_dim3=128,output_dims=4,loss=nn.MSELoss()):
         super().__init__()
         
         self.output_dims=output_dims
@@ -10,8 +10,9 @@ class myModel(nn.Module):
         self.hl_dim1=hl_dim1
         self.hl_dim2=hl_dim2
         self.hl_dim3=hl_dim3
-
-        
+        self.checkpoint_path=checkpoint_pth
+        self.learning_rate=learning_rate
+        self.optimizer=optim(self.parameters(),self.learning_rate)
         self.loss=loss
         self.n1=nn.Sequential(
             
@@ -52,3 +53,17 @@ class myModel(nn.Module):
         epoch_loss = torch.stack(outputs).mean()   # Combine losses
         print("calculated mean val loss",epoch_loss.item())
         return epoch_loss.item()
+
+    def save_model(self,ep):
+        checkpoint={
+            'epoch':ep,
+            'optimizer':self.optimizer.state_dict(),
+            'model':self.state_dict(),
+        }
+        torch.save(checkpoint,self.checkpoint_pth)
+        
+    def load_model(self,optimizer):
+        checkpoint=torch.load(self.checkpoint_pth)
+        self.load_state_dict(checkpoint['model'])
+        self.optimizer.load_state_dict(checkpoint['optimizer'])
+        return checkpoint['epoch']
