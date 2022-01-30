@@ -80,9 +80,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
     for ep in range(trained_epoch,epochs):
         print("epoch",ep)
         model.train()
-        model.save_model(ep,optimizer)
-        optimizer,trained_epoch=model.load_model(optimizer)
-        print("successfully loaded ",trained_epoch)
+        
         train_losses=[]
         for idx,batch in enumerate(train_dl):
             
@@ -96,7 +94,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
             train_losses.append(l)
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         print("saving model")
-        model.save_model(ep)
+        model.save_model(ep,optimizer)
         print("saved ")
         print("Performing Model Evaluation   ... wait ")
         result=evaluate(model,val_dl)
