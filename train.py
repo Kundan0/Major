@@ -75,10 +75,10 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         print("starting from epoch ",trained_epoch)
         print("Successfully loaded the model")
     except:
-        trained_epoch=0
+        trained_epoch=-1
         print("Cannot Load Model")
     
-    for ep in range(trained_epoch,epochs):
+    for ep in range(trained_epoch+1,epochs):
         print("epoch",ep)
         model.train()
         
