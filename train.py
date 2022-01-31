@@ -6,6 +6,7 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 import matplotlib.pyplot as plt
+from google.colab import files
 PATH=os.path.join("/content","drive","MyDrive")
 PATHJ=os.path.join("/content","Major")
 
@@ -102,6 +103,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         train_loss.append(torch.stack(train_losses).mean().item())
         validation_loss.append(result)
         print(f"mean validation loss for this epoch {ep}is {result}")
+        files.download(chkpt_file_pth)
             
 #comments added for branch2            
         
