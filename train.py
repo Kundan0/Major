@@ -6,12 +6,13 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 import matplotlib.pyplot as plt
+from google.colab import files
 PATH=os.path.join("/content","drive","MyDrive")
 PATHJ=os.path.join("/content","Major")
 
 #PATH=os.curdir
 
-learn_type=3
+learn_type=1
 if learn_type==1:
     model_name="trained1"
     json_name="JSONa.json"
@@ -38,8 +39,9 @@ val_dl=DataLoader(val_ds,batch_size=4,shuffle=True)
 
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
-
-model=myModel().to(device)
+lr_rate=0.0001
+chkpt_file_pth=os.path.join(PATHJ,"State",model_name)
+model=myModel(chkpt_file_pth).to(device)
 train_loss=[]
 validation_loss=[]
 def plot_losses():
@@ -58,28 +60,29 @@ def evaluate(model, val_dl):
       print("validating batch number ",idx+1)
       output=model.validation_step(batch)
       outputs.append(output)
-      print(outputs)
-      print("finished index ",idx+1)
+      
+      
     
     return model.validation_epoch_end(outputs)
 
 
-def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
+def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
     optimizer=optim(model.parameters(),learning_rate)
     
     
     try:
         print("Loading Model ...")
-        model.load_state_dict(torch.load(os.path.join(PATHJ,"State",model_name)))
+        optimizer,trained_epoch=model.load_model(optimizer)
+        print("starting from epoch ",trained_epoch+1)
         print("Successfully loaded the model")
     except:
+        trained_epoch=-1
         print("Cannot Load Model")
-    print("Performing Model Evaluation ... Wait ")
-    result=evaluate(model,val_dl)
-    print('Result of Evaluation ,mean loss obtained ',result['val_loss'])
-    for ep in range(epochs):
+    
+    for ep in range(trained_epoch+1,epochs):
         print("epoch",ep)
         model.train()
+        
         train_losses=[]
         for idx,batch in enumerate(train_dl):
             
@@ -91,21 +94,22 @@ def fit(epochs,model,train_dl,val_dl,learning_rate,optim=torch.optim.SGD):
             loss.backward()
             optimizer.step() 
             train_losses.append(l)
-            print("average_Loss for last 20 batches",np.average(train_losses[-20:]))
+            #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         print("saving model")
-        torch.save(model.state_dict(),os.path.join(PATHJ,"State",model_name))
+        model.save_model(ep,optimizer)
         print("saved ")
-        print("evaluation  model ... wait ")
+        print("Performing Model Evaluation   ... wait ")
         result=evaluate(model,val_dl)
         train_loss.append(torch.stack(train_losses).mean().item())
-        validation_loss.append(result['val_loss'])
-        print(f"mean validation loss for this epoch {ep}is {result['val_loss']}")
+        validation_loss.append(result)
+        print(f"mean validation loss for this epoch {ep}is {result}")
+        files.download(chkpt_file_pth)
             
 #comments added for branch2            
         
         
 
-fit(15,model,train_dl,val_dl,0.0001,torch.optim.Adam)
+fit(15,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
 
 plot_losses()
 
