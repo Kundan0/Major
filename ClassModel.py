@@ -49,18 +49,22 @@ class myModel(nn.Module):
         return loss.detach()
     
     def validation_epoch_end(self, outputs):
-        print("calculating mean val loss")
+    
         
         epoch_loss = torch.stack(outputs).mean()   # Combine losses
         
         return epoch_loss.item()
 
-    def save_model(self,ep,optimizer):
+    def save_model(self,train_l,val_l,ep,optimizer):
         checkpoint={
+            
             'epoch':ep,
+            'train_loss':train_l,
+            'validation_loss':val_l,
             'optimizer':optimizer.state_dict(),
             'model':self.state_dict(),
         }
+        print(f"Saving chekpoint for epoch {ep} with average train_loss {train_l} and average validation loss {val_l} at file path {self.checkpoint_path}")
         torch.save(checkpoint,self.checkpoint_path)
         
     def load_model(self,optimizer):

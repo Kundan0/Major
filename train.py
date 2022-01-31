@@ -95,14 +95,16 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
             optimizer.step() 
             train_losses.append(l)
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
-        print("saving model")
-        model.save_model(ep,optimizer)
-        print("saved ")
+        
         print("Performing Model Evaluation   ... wait ")
-        result=evaluate(model,val_dl)
-        train_loss.append(torch.stack(train_losses).mean().item())
-        validation_loss.append(result)
-        print(f"mean validation loss for this epoch {ep}is {result}")
+        mean_val_loss=evaluate(model,val_dl)
+        mean_train_loss=torch.stack(train_losses).mean().item()
+        train_loss.append(mean_train_loss)
+        validation_loss.append(mean_val_loss)
+        
+        print("saving model")
+        model.save_model(mean_train_loss,mean_val_loss,ep,optimizer)
+        print("saved ")
         files.download(chkpt_file_pth)
             
 #comments added for branch2            
