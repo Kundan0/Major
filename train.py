@@ -6,7 +6,7 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 
-PATH=os.path.join("/content","drive","MyDrive")
+PATH=os.path.join("/content")
 PATHJ=os.path.join("/content","Major")
 
 #PATH=os.curdir
@@ -24,7 +24,7 @@ else:
 print(model_name)
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
 print(device)    
-depth_dir=os.path.join(PATH,"Depth2","All")
+depth_dir=os.path.join(PATH,"Depth2")
 of_dir=os.path.join(PATH,"NewOpticalFlow")
 an_dir=os.path.join(PATH,"Annotations")
 json_dir=os.path.join(PATHJ,json_name)
