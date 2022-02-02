@@ -46,14 +46,22 @@ class myDataset(Dataset):
         
         PATH_Depth=os.path.join(self.depth_dir,folder,"imgs")
         PATH_OF=os.path.join(self.of_dir,folder)
-        
-        depth_tensor1=ToTensor()(Image.open(os.path.join(PATH_Depth,filename1)).crop((0,50,320,240)).resize(self.size))[0]
-        
-        depth_tensor2=ToTensor()(Image.open(os.path.join(PATH_Depth,filename2)).crop((0,50,320,240)).resize(self.size))[0]
-
-        of_tensor1=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"a.png")).crop((0,200,1280,720)).resize(self.size)))[0]
-        of_tensor2=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"b.png")).crop((0,200,1280,720)).resize(self.size)))[0]
-
+        try:
+            depth_tensor1=ToTensor()(Image.open(os.path.join(PATH_Depth,filename1)).crop((0,50,320,240)).resize(self.size))[0]
+        except Exception as e:
+            print(f"error reading {os.path.join(PATH_Depth,filename1)}   {e}")
+        try:
+            depth_tensor2=ToTensor()(Image.open(os.path.join(PATH_Depth,filename2)).crop((0,50,320,240)).resize(self.size))[0]
+        except Exception as e:
+            print(f"error reading {os.path.join(PATH_Depth,filename2)}   {e}")
+        try:
+            of_tensor1=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"a.png")).crop((0,200,1280,720)).resize(self.size)))[0]
+        except Exception as e:
+            print(f"error reading {os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg',''))} a {e}")
+        try:
+            of_tensor2=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"b.png")).crop((0,200,1280,720)).resize(self.size)))[0]
+        except Exception as e:
+            print(f"error reading {os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg',''))} b {e}")
         
 
         DELTA=20

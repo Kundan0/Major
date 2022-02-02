@@ -1,9 +1,10 @@
 from matplotlib.transforms import Bbox
 import torch
 from time import time
-def ret_bbox(model,img_batch,CONFIDENCE_MINM=0.5):
+def ret_bbox(img_batch,CONFIDENCE_MINM=0.5):
 
-    
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
     # Inference
     start=time()
     results = model(img_batch)
@@ -25,12 +26,11 @@ def ret_bbox(model,img_batch,CONFIDENCE_MINM=0.5):
 
 if __name__=="__main__":
     # Model
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-
+    
     # Images
     imgs = ['./veh.jpeg','./001.jpg']  # batch of images
 
-    box=ret_bbox(model,imgs)
+    box=ret_bbox(imgs)
     print(box)
 
 # we can send multiple images inside imgs variable , box[0] returns bbox for first image , box[1] for bbox for second image and so on 
