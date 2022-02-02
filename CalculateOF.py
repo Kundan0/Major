@@ -1,39 +1,27 @@
 import os
 import sys
 import numpy as np
+import cv2
 import matplotlib.pyplot as plt
+from simplejson import load
 import torch
 from glob import glob
-from tqdm import tqdm
 from PIL import Image
 
-file1="" #path1 here 
-file2="" #path2 here
-sys.path.append("./g")
+sys.path.append(os.path.abspath('./OpticalFlow/archive'))
+
 from raft.core.raft import RAFT
 from raft.core.utils import flow_viz
 from raft.core.utils.utils import InputPadder
 from raft.config import RAFTConfig
 
-config = RAFTConfig(
-    dropout=0,
-    alternate_corr=False,
-    small=False,
-    mixed_precision=False
-)
 
-model = RAFT(config)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f'device: {device}')
-
-weights_path = '/content/drive/MyDrive/Colab Notebooks/archive/raft-sintel.pth'
-#weights_path = '/kaggle/input/raft-pytorch/raft-things.pth'
-
-ckpt = torch.load(weights_path, map_location=device)
-model.to(device)
-model.load_state_dict(ckpt)
 def load_image(imfile, device):
-    img = np.array(Image.open(imfile)).astype(np.uint8)
+    if (isinstance(imfile,np.ndarray)):
+         img = imfile
+    elif (isinstance(imfile,str)):
+        img=np.array(Image.open(imfile)).astype(np.uint8)
+
     img = torch.from_numpy(img).permute(2, 0, 1).float()
     return img[None].to(device)
 
@@ -55,39 +43,55 @@ def viz(img1, img2, flo):
     ax3.imshow(flo)
     plt.show()
 
-
-odir="/content/drive/MyDrive/Colab Notebooks"
-try:
-  os.mkdir(odir)
-except:
-  pass
-try:
-  odir1=os.path.join(odir,'test')
-  os.mkdir(odir1)
-
-except:
-  pass
-
-  image1 = load_image(file1, device)
-  image2 = load_image(file2, device)
-
-  padder = InputPadder(image1.shape)
-  image1, image2 = padder.pad(image1, image2)
-
-  with torch.no_grad():
-      flow_low, flow_up = model(image1, image2, iters=20, test_mode=True)
+def ret_of(image1,image2,model,device):
+    image1=load_image(image1,device)
+    image2=load_image(image2,device)
+    padder = InputPadder(image1.shape)
+    image1, image2 = padder.pad(image1, image2)
+    with torch.no_grad():
+        _, flo = model(image1, image2, iters=20, test_mode=True)
 
     #viz(image1, image2, flow_up)
-  flo=flow_up
-  flo = flo[0].cpu().numpy()
-  plt.axis("off")
-  try:
-    filename11=os.path.join(odir1,'a.png')
-    plt.imsave(filename11,flo[0],cmap="gray")
-  except:
-    pass     
-  try:
-    filename22=os.path.join(odir1,'b.png')
-    plt.imsave(filename22,flo[1],cmap="gray")
-  except:
-    pass
+    
+    flo = flo[0].cpu().numpy()
+    return flo[0],flo[1]
+
+def load_RAFT(device):
+    config = RAFTConfig(
+        dropout=0,
+        alternate_corr=False,
+        small=False,
+        mixed_precision=False
+    )
+
+    model = RAFT(config)
+
+
+    
+
+    weights_path = './archive/raft-sintel.pth'
+    #weights_path = '.archive/raft-things.pth'
+
+    ckpt = torch.load(weights_path, map_location=device)
+    model.to(device)
+    model.load_state_dict(ckpt)
+    return model
+
+
+
+if __name__=="__main__":
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f'device: {device}')
+    
+    model=load_RAFT(device)
+
+    file1=cv2.imread('./sample1.jpg')
+    file2=cv2.imread('./sample2.jpg')
+    flows=ret_of(file1,file2,model,device)
+    
+
+    
+
+    
+    
