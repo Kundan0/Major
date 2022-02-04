@@ -1,2 +1,5 @@
 frames/
-
+archive/
+download_frames/
+AdaBins/
+.gitignore

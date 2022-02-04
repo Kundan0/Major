@@ -1,18 +1,11 @@
 from matplotlib.transforms import Bbox
 import torch
 from time import time
-def ret_bbox(img_batch,CONFIDENCE_MINM=0.5):
+def ret_bbox(img_batch,model,CONFIDENCE_MINM=0.5):
 
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-
-    # Inference
-    start=time()
-    results = model(img_batch)
     
+    results = model(img_batch)
     vehicles=results.xyxy[0]
-    #print(results.pandas().xyxy[0])
-    # predicted_num=len(len(results.xyxy[0]))
-    # print(predicted_num)  # img1 predictions (tensor)
     valid_vehicle=[2,3,5,7]
     CONFIDENCE_MINM=0.50
     bbox=[]
@@ -26,11 +19,12 @@ def ret_bbox(img_batch,CONFIDENCE_MINM=0.5):
 
 if __name__=="__main__":
     # Model
-    
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
     # Images
     imgs = ['./veh.jpeg','./001.jpg']  # batch of images
 
-    box=ret_bbox(imgs)
+    box=ret_bbox(imgs,model)
     print(box)
 
 # we can send multiple images inside imgs variable , box[0] returns bbox for first image , box[1] for bbox for second image and so on 

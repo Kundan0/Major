@@ -56,7 +56,7 @@ def ret_of(image1,image2,model,device):
     flo = flo[0].cpu().numpy()
     return flo[0],flo[1]
 
-def load_RAFT(device):
+def load_RAFT(weights_path,device):
     config = RAFTConfig(
         dropout=0,
         alternate_corr=False,
@@ -69,7 +69,7 @@ def load_RAFT(device):
 
     
 
-    weights_path = './archive/raft-sintel.pth'
+    
     #weights_path = '.archive/raft-things.pth'
 
     ckpt = torch.load(weights_path, map_location=device)
@@ -82,9 +82,9 @@ def load_RAFT(device):
 if __name__=="__main__":
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f'device: {device}')
     
-    model=load_RAFT(device)
+    weights_path = './archive/raft-sintel.pth'
+    model=load_RAFT(weights_path,device)
 
     file1=cv2.imread('./sample1.jpg')
     file2=cv2.imread('./sample2.jpg')

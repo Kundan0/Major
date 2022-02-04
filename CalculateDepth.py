@@ -43,14 +43,22 @@ def ret_depth(batch,model):
     #print(depth.squeeze(0).squeeze(0).size())
     return torch.split(depth.detach(),1)
 
-if __name__=="__main__":
+def load_ADA(pretrained,device):
     MIN_DEPTH = 1e-3
     #MAX_DEPTH_NYU = 10
     MAX_DEPTH_KITTI = 80
     N_BINS = 256 
-    pretrained = "/home/kundan/Documents/Major/AdaBins/pretrained/AdaBins_kitti.pt"
+    
     model = UnetAdaptiveBins.build(n_bins=N_BINS, min_val=MIN_DEPTH, max_val=MAX_DEPTH_KITTI)
     model, _, _ = model_io.load_checkpoint(pretrained, model)
+    return model.to(device)
+
+
+if __name__=="__main__":
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    pretrained = "/home/kundan/Documents/Major/AdaBins/pretrained/AdaBins_kitti.pt"
+    model=load_ADA(pretrained,device)
     imgs=['./sample2.png']
 
     depth=ret_depth(imgs,model) # now depth is a tuple 
