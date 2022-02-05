@@ -6,7 +6,6 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 import matplotlib.pyplot as plt
-from google.colab import files
 PATH=os.path.join("/content","drive","MyDrive")
 PATHJ=os.path.join("/content","Major")
 
@@ -30,9 +29,9 @@ of_dir=os.path.join(PATH,"NewOpticalFlow")
 an_dir=os.path.join(PATH,"Annotations")
 json_dir=os.path.join(PATHJ,json_name)
 
-dataset=myDataset(json_dir,depth_dir,of_dir,an_dir)
+dataset=myDataset(json_dir,depth_dir,of_dir,an_dir,delta=10)
 dataset_size=len(dataset)
-train_size=int(dataset_size*0.9)
+train_size=int(dataset_size*0.8)
 train_ds, val_ds = random_split(dataset, [train_size,dataset_size-train_size])
 train_dl=DataLoader(train_ds,batch_size=4,shuffle=True)
 val_dl=DataLoader(val_ds,batch_size=4,shuffle=True)
@@ -41,7 +40,7 @@ train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
 lr_rate=0.0001
 chkpt_file_pth=os.path.join(PATHJ,"State",model_name)
-model=myModel(chkpt_file_pth).to(device)
+model=myModel('1',chkpt_file_pth,hl_dim1=70,hl_dim2=70,hl_dim3=70,hl_dim4=70).to(device)
 train_loss=[]
 validation_loss=[]
 def plot_losses():
@@ -72,9 +71,11 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
     
     try:
         print("Loading Model ...")
-        optimizer,trained_epoch=model.load_model(optimizer)
-        print("starting from epoch ",trained_epoch+1)
+        optimizer,trained_epoch,last_tl,last_vl=model.load_model(optimizer)
+        print(f"Training loss {last_tl} and validation loss {last_vl}for last epoch {trained_epoch} ")
         print("Successfully loaded the model")
+        print("Starting from epoch ",trained_epoch+1)
+        
     except:
         trained_epoch=-1
         print("Cannot Load Model")
@@ -95,21 +96,23 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
             optimizer.step() 
             train_losses.append(l)
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
-        print("saving model")
-        model.save_model(ep,optimizer)
-        print("saved ")
+        mean_tl=torch.stack(train_losses).mean().item()
         print("Performing Model Evaluation   ... wait ")
-        result=evaluate(model,val_dl)
-        train_loss.append(torch.stack(train_losses).mean().item())
-        validation_loss.append(result)
-        print(f"mean validation loss for this epoch {ep}is {result}")
-        files.download(chkpt_file_pth)
+        mean_vl=evaluate(model,val_dl)
+        print("Saving model")
+        model.save_model(ep,mean_tl,mean_vl,optimizer)
+        print("Saved ")
+        train_loss.append(mean_tl)
+        validation_loss.append(mean_vl)
+
+        print(f"mean validation loss for this epoch {ep}is {mean_vl} /n mean training loss is {mean_tl}")
+        
             
-#comments added for branch2            
+            
         
         
 
-fit(15,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
+fit(500,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
 
 plot_losses()
 

@@ -7,12 +7,13 @@ from torchvision.transforms import ToTensor
 from torchvision.transforms.transforms import ToPILImage
 
 class myDataset(Dataset):
-    def __init__(self,json_dir,depth_dir,of_dir,annotation_dir,size=(128,72)):
+    def __init__(self,json_dir,depth_dir,of_dir,annotation_dir,delta,size=(128,72)):
         super().__init__()
         self.depth_dir=depth_dir
         self.of_dir=of_dir
         self.annotation_dir=annotation_dir
         self.json_dir=json_dir
+        self.delta=delta
         
         self.size=size
     
@@ -56,7 +57,7 @@ class myDataset(Dataset):
 
         
 
-        DELTA=20
+        DELTA=self.delta
         HALF_DELTA=int(DELTA/2)
         
         bbox_mask=torch.zeros(self.size[::-1])

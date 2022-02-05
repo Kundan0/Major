@@ -1,9 +1,10 @@
 import cv2
+import os
 import numpy as np
 from CalculateDepth import ret_depth,load_ADA
 from CalculateOF import ret_of,load_RAFT
 from tracker import ret_bbox
-
+from ClassModel import myModel
 from AdaBins import model_io
 from AdaBins.models import UnetAdaptiveBins
 import matplotlib.image as mpimg
@@ -25,7 +26,17 @@ of_model=load_RAFT(weights_path,device)
 tracker_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 #Vehicle velocity and position estimation model
-type1_model=
+
+type1_model=myModel('1',os.path.join(".","State","trained1"))
+type1_model.load_model()
+type1_model=myModel('2',os.path.join(".","State","trained2"))
+type1_model.load_model()
+type1_model=myModel('3',os.path.join(".","State","trained3"))
+type1_model.load_model()
+type1_model=myModel('4',os.path.join(".","State","trained4"))
+type1_model.load_model()
+
+
 
 #video 
 file_path='./download.mp4'
