@@ -6,25 +6,28 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 import matplotlib.pyplot as plt
-PATH=os.path.join("/content","drive","MyDrive")
+PATH=os.path.join("/content")
 PATHJ=os.path.join("/content","Major")
 
 #PATH=os.curdir
 
-learn_type=2
+learn_type=1
 if learn_type==1:
     model_name="trained1"
     json_name="JSONa.json"
 elif learn_type==2:
     model_name="trained2"
     json_name="JSONb.json"
+elif learn_type==4:
+    model_name="trained4"
+    json_name="JSONbd.json"
 else:
     model_name="trained3"
     json_name="JSONc.json"
 print(model_name)
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
 print(device)    
-depth_dir=os.path.join(PATH,"Depth2","All")
+depth_dir=os.path.join(PATH,"Depth2")
 of_dir=os.path.join(PATH,"NewOpticalFlow")
 an_dir=os.path.join(PATH,"Annotations")
 json_dir=os.path.join(PATHJ,json_name)
