@@ -14,17 +14,17 @@ class myDataset(Dataset):
         self.annotation_dir=annotation_dir
         self.json_dir=json_dir
         self.delta=delta
-        
+        self.json_data=json.load(open(self.json_dir))
         self.size=size
     
     
     
     def __len__(self):
-        return  len(json.load(open(self.json_dir)))
+        return  len(self.json_data)
 
     def __getitem__(self, index) :
         
-        json_data=json.load(open(self.json_dir))[index]
+        json_data=self.json_data[index]
         folder=json_data["folder"]
         filename1=json_data["image_name"]
         filename2=str(int(filename1.replace('.jpg',''))+1).zfill(3)+".jpg"
@@ -48,13 +48,15 @@ class myDataset(Dataset):
         PATH_Depth=os.path.join(self.depth_dir,folder,"imgs")
         PATH_OF=os.path.join(self.of_dir,folder)
         
-        depth_tensor1=ToTensor()(Image.open(os.path.join(PATH_Depth,filename1)).crop((0,50,320,240)).resize(self.size))[0]
-        
-        depth_tensor2=ToTensor()(Image.open(os.path.join(PATH_Depth,filename2)).crop((0,50,320,240)).resize(self.size))[0]
+        try:
+            depth_tensor1=ToTensor()(Image.open(os.path.join(PATH_Depth,filename1)).crop((0,50,320,240)).resize(self.size))[0]
+            
+            depth_tensor2=ToTensor()(Image.open(os.path.join(PATH_Depth,filename2)).crop((0,50,320,240)).resize(self.size))[0]
 
-        of_tensor1=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"a.png")).crop((0,200,1280,720)).resize(self.size)))[0]
-        of_tensor2=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"b.png")).crop((0,200,1280,720)).resize(self.size)))[0]
-
+            of_tensor1=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"a.png")).crop((0,200,1280,720)).resize(self.size)))[0]
+            of_tensor2=ToTensor()((Image.open(os.path.join(PATH_OF,filename1.lstrip('0').replace('.jpg','')+"b.png")).crop((0,200,1280,720)).resize(self.size)))[0]
+        except Exception as e:
+            print(f"couldn't read folder {folder } {filename1}")
         
 
         DELTA=self.delta

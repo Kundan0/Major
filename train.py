@@ -14,7 +14,7 @@ PATHJ=os.path.join("/content","Major")
 learn_type=1
 if learn_type==1:
     model_name="trained1"
-    json_name="JSONa.json"
+    json_name="JSONa1.json"
 elif learn_type==2:
     model_name="trained2"
     json_name="JSONb.json"
@@ -36,8 +36,8 @@ dataset=myDataset(json_dir,depth_dir,of_dir,an_dir,delta=10)
 dataset_size=len(dataset)
 train_size=int(dataset_size*0.8)
 train_ds, val_ds = random_split(dataset, [train_size,dataset_size-train_size])
-train_dl=DataLoader(train_ds,batch_size=4,shuffle=True)
-val_dl=DataLoader(val_ds,batch_size=4,shuffle=True)
+train_dl=DataLoader(train_ds,batch_size=64,shuffle=True)
+val_dl=DataLoader(val_ds,batch_size=64,shuffle=True)
 
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)

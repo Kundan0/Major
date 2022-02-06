@@ -26,7 +26,7 @@ class myModel(nn.Module):
             nn.Linear(self.hl_dim3,self.hl_dim4),
             nn.Dropout(p=0.2),
             nn.Linear(self.hl_dim4,self.output_dims),
-            nn.Dropout(p=0.2),
+            
             
 
         )
@@ -40,7 +40,7 @@ class myModel(nn.Module):
             nn.Linear(self.hl_dim3,self.hl_dim4),
             nn.Dropout(p=0.2),
             nn.Linear(self.hl_dim4,self.output_dims),
-            nn.Dropout(p=0.2),
+            
 
         )
         self.n3=nn.Sequential(
@@ -52,7 +52,7 @@ class myModel(nn.Module):
             nn.Dropout(p=0.2),
             
             nn.Linear(self.hl_dim3,self.output_dims),
-            nn.Dropout(p=0.2),
+            
 
         )
         self.n4=nn.Sequential(
@@ -64,7 +64,7 @@ class myModel(nn.Module):
             nn.Dropout(p=0.2),
             
             nn.Linear(self.hl_dim3,self.output_dims),
-            nn.Dropout(p=0.2),
+            
 
         )
 

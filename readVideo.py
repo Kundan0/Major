@@ -29,12 +29,12 @@ tracker_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 type1_model=myModel('1',os.path.join(".","State","trained1"))
 type1_model.load_model()
-type1_model=myModel('2',os.path.join(".","State","trained2"))
-type1_model.load_model()
-type1_model=myModel('3',os.path.join(".","State","trained3"))
-type1_model.load_model()
-type1_model=myModel('4',os.path.join(".","State","trained4"))
-type1_model.load_model()
+type2_model=myModel('2',os.path.join(".","State","trained2"))
+type2_model.load_model()
+type3_model=myModel('3',os.path.join(".","State","trained3"))
+type3_model.load_model()
+type4_model=myModel('4',os.path.join(".","State","trained4"))
+type4_model.load_model()
 
 
 
@@ -63,7 +63,7 @@ while(video.isOpened()):
         depth=ret_depth(frames,depth_model) #it is tuple returned for each frame
         of=ret_of(frame[0],frame[1],of_model,device)
         bbox_track=ret_bbox([frames[0]],tracker_model)[0] # dictionary with {left,right,bottom,top}
-
+        
         pass
 
         
@@ -74,13 +74,13 @@ while(video.isOpened()):
     frames.append(frame)
     i+=1
     
-    depth0=depth[0].squeeeze(0)
-    depth1=depth[1].squeeze(0)
+    # depth0=depth[0].squeeeze(0)
+    # depth1=depth[1].squeeze(0)
     
-    depth=tr.functional.crop(depth,top=50,left=0,height=(240-50),width=320)
+    # depth=tr.functional.crop(depth,top=50,left=0,height=(240-50),width=320)
     
     
-    print('saved')
+    # print('saved')
     
 video.release()
 cv2.destroyAllWindows()
