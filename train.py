@@ -6,9 +6,15 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 import matplotlib.pyplot as plt
-PATH=os.path.join("/content")
-PATHJ=os.path.join("/content","Major")
 
+#colab
+# PATH=os.path.join("/content")
+# PATHJ=os.path.join("/content","Major")
+
+#kaggle
+PATH=os.path.join("/kaggle","working")
+PATHJ=os.path.join(PATH,"Major")
+PATHS=os.path.join(PATH,"models")
 #PATH=os.curdir
 
 learn_type=1
@@ -20,7 +26,7 @@ elif learn_type==2:
     json_name="JSONb.json"
 elif learn_type==4:
     model_name="trained4"
-    json_name="JSONbd.json"
+    json_name="JSONd.json"
 else:
     model_name="trained3"
     json_name="JSONc.json"
@@ -42,7 +48,7 @@ val_dl=DataLoader(val_ds,batch_size=64,shuffle=True)
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
 lr_rate=0.0001
-chkpt_file_pth=os.path.join(PATHJ,"State",model_name)
+chkpt_file_pth=os.path.join(PATHS,model_name)
 model=myModel('1',chkpt_file_pth,hl_dim1=70,hl_dim2=70,hl_dim3=70,hl_dim4=70).to(device)
 train_loss=[]
 validation_loss=[]
