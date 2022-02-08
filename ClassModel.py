@@ -2,16 +2,29 @@ import torch
 import torch.nn as nn
 class myModel(nn.Module):
     #hl_dims are hidden layer dimensions
-    def __init__(self,type_of,checkpoint_pth,size=(128,72),hl_dim1=32,hl_dim2=32,hl_dim3=32,hl_dim4=32,output_dims=4,loss=nn.MSELoss()):
+    def __init__(self,type_of,checkpoint_pth,size=(128,72),output_dims=4,loss=nn.MSELoss()):
         super().__init__()
         self.type_of=type_of
+        if type_of=='1' or type:
+            self.hl_dim1=70
+            self.hl_dim2=70
+            self.hl_dim3=70
+            self.hl_dim4=70
+        elif type_of=='2' or type_of=='3':
+            self.hl_dim1=60
+            self.hl_dim2=60
+            self.hl_dim3=60
+            self.hl_dim4=60
+        else:
+            self.hl_dim1=40
+            self.hl_dim2=40
+            self.hl_dim3=40
+            self.hl_dim4=40
+
         self.output_dims=output_dims
         self.size=size
         
-        self.hl_dim1=hl_dim1
-        self.hl_dim2=hl_dim2
-        self.hl_dim3=hl_dim3
-        self.hl_dim4=hl_dim4
+        
         self.checkpoint_path=checkpoint_pth
         
         self.loss=loss
@@ -76,6 +89,8 @@ class myModel(nn.Module):
             result=self.n2(inte)
         if self.type_of=='3':
             result=self.n3(inte)
+        if self.type_of=='4':
+            result=self.n4(inte)
         return result
         
 

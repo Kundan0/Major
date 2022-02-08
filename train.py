@@ -8,13 +8,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #colab
-# PATH=os.path.join("/content")
-# PATHJ=os.path.join("/content","Major")
+PATH=os.path.join("/content")
+PATHJ=os.path.join("/content","Major")
 
 #kaggle
-PATH=os.path.join("/kaggle","working")
-PATHJ=os.path.join(PATH,"Major")
-PATHS=os.path.join(PATH,"models")
+# PATH=os.path.join("/kaggle","working")
+# PATHJ=os.path.join(PATH,"Major")
+# PATHS=os.path.join(PATH,"models")
 #PATH=os.curdir
 
 learn_type=1
@@ -48,8 +48,8 @@ val_dl=DataLoader(val_ds,batch_size=64,shuffle=True)
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
 lr_rate=0.0001
-chkpt_file_pth=os.path.join(PATHS,model_name)
-model=myModel('1',chkpt_file_pth,hl_dim1=70,hl_dim2=70,hl_dim3=70,hl_dim4=70).to(device)
+chkpt_file_pth=os.path.join(PATHJ,"State",model_name)
+model=myModel('1',chkpt_file_pth).to(device)
 train_loss=[]
 validation_loss=[]
 def plot_losses():
