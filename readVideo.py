@@ -56,6 +56,9 @@ i=1
 frames=[] # two store two frames for sending to depth ,tracker and of network
 JUMP=round(FPS*0.1-1)
 DIFF=6
+size=(128,72)
+HEIGHT_RATIO=10
+WIDTH_RATIO=10
 while(video.isOpened()):
     success,frame=video.read()
     if success==False:
@@ -72,7 +75,7 @@ while(video.isOpened()):
         depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
         depth0,depth1=depth0.squeeeze(0),depth1.squeeze(0)# removing the channel layer as it is a single channel
         depth0,depth1=tr.functional.crop(depth0,top=50,left=0,height=190),tr.functional.crop(depth1,top=50,left=0,height=190)# cropping top portion
-        depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),(128,72))).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),(128,72))).to(torch.float32)
+        depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32)
 
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
@@ -81,11 +84,29 @@ while(video.isOpened()):
         of0,of1=torch.from_numpy(of0),torch.from_numpy(of1)
 
         # vehicle identification
-        left=ret_bbox([frames[0]],tracker_model,0.6)[0]["left"]
-        right=ret_bbox([frames[0]],tracker_model,0.6)[0]["right"]
-        top=ret_bbox([frames[0]],tracker_model,0.6)[0]["top"]
-        bottom=ret_bbox([frames[0]],tracker_model,0.6)[0]["bottom"]
+        bbox=ret_bbox([frames[0]],tracker_model,0.6)[0]
+        left=int(bbox["left"]/WIDTH_RATIO)
+        right=int(bbox["right"]/WIDTH_RATIO)
+        top=int(bbox["top"]/HEIGHT_RATIO)
+        bottom=int(bbox["bottom"]/HEIGHT_RATIO)
 
+        DELTA=10
+        HALF_DELTA=int(DELTA/2)
+        
+        bbox_mask=torch.zeros(size[::-1])
+        
+        
+        
+        try:
+            bbox_size=(bottom-top+DELTA,right-left+DELTA)
+            ones=torch.ones(bbox_size)
+            bbox_mask[top-HALF_DELTA:bottom+HALF_DELTA,left-HALF_DELTA:right+HALF_DELTA]=ones
+        except:
+            bbox_size=(bottom-top,right-left)
+            ones=torch.ones(bbox_size)
+            bbox_mask[top:bottom,left:right]=ones
+        
+        inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0)
         
 
         frames=[]

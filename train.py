@@ -6,11 +6,12 @@ from ClassModel import myModel
 from DeviceData import DeviceDataLoader
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 #colab
 PATH=os.path.join("/content")
 PATHJ=os.path.join("/content","Major")
-PATHS=os.path.join(PATH,"drive","State")
+PATHS=os.path.join(PATH,"drive","MyDrive","State")
 #kaggle
 # PATH=os.path.join("/kaggle","working")
 # PATHJ=os.path.join(PATH,"Major")
@@ -54,7 +55,7 @@ try:
 except Exception as e:
     print(e)
 chkpt_file_pth=os.path.join(PATHS,model_name)
-model=myModel('1',chkpt_file_pth).to(device)
+model=myModel(str(learn_type),chkpt_file_pth).to(device)
 train_loss=[]
 validation_loss=[]
 def plot_losses():
@@ -115,6 +116,10 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         mean_vl=evaluate(model,val_dl)
         print("Saving model")
         model.save_model(ep,mean_tl,mean_vl,optimizer)
+        with open(os.path.join(PATHS,model_name+"train_losses.json"),'w') as f:
+            json.dump(train_loss,f)
+        with open(os.path.join(PATHS,model_name+"val_losses.json"),'w') as f:
+            json.dump(validation_loss,f)
         print("Saved ")
         train_loss.append(mean_tl)
         validation_loss.append(mean_vl)
