@@ -69,6 +69,7 @@ while(video.isOpened()):
                                 
         frames.append(frame) 
         CUR_INDEX=i
+    
     if (i==CUR_INDEX+JUMP): # JUMP is for managing frame rate (we have trained for 20 fps)
         frames.append(frame)
         #depth processing
@@ -80,36 +81,67 @@ while(video.isOpened()):
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
-        of0,of1=cv2.resize(of0,(128,72)),cv2.resize(of1,(128,72))
+        of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0),torch.from_numpy(of1)
 
         # vehicle identification
         bbox=ret_bbox([frames[0]],tracker_model,0.6)[0]
-        left=int(bbox["left"]/WIDTH_RATIO)
-        right=int(bbox["right"]/WIDTH_RATIO)
-        top=int(bbox["top"]/HEIGHT_RATIO)
-        bottom=int(bbox["bottom"]/HEIGHT_RATIO)
+        num_vehicles=len(bbox)
+        results=[]
+        for vehicle in bbox:
+            
+            left=int(bbox["left"])
+            right=int(bbox["right"])
+            top=int(bbox["top"])
+            bottom=int(bbox["bottom"])
+            area=(right-left)*(bottom-top)
+            
+            left_bbox=int(left/WIDTH_RATIO)
+            right_bbox=int(right/WIDTH_RATIO)
+            top_bbox=int(top/HEIGHT_RATIO)
+            bottom_bbox=int(bottom/HEIGHT_RATIO)
+            DELTA=10
+            HALF_DELTA=int(DELTA/2)
+            
+            bbox_mask=torch.zeros(size[::-1])
+            
+            
+            
+            try:
+                bbox_size=(bottom_bbox-top_bbox+DELTA,right_bbox-left_bbox+DELTA)
+                ones=torch.ones(bbox_size)
+                bbox_mask[top_bbox-HALF_DELTA:bottom_bbox+HALF_DELTA,left_bbox-HALF_DELTA:right_bbox+HALF_DELTA]=ones
+            except:
+                bbox_size=(bottom_bbox-top_bbox,right_bbox-left_bbox)
+                ones=torch.ones(bbox_size)
+                bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
+            
+            inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
+            if area<2500:
+                result=type1_model(inter_tensor)
+            elif area>=2500 and area<5000:
+                result=type2_model(inter_tensor)
+            elif area>=5000 and area < 7500:
+                result=type3_model(inter_tensor)
+            elif area >7500:
+                result=type4_model(inter_tensor)
+            
+            #convert result to tuple using torch.split(result,1)
 
-        DELTA=10
-        HALF_DELTA=int(DELTA/2)
-        
-        bbox_mask=torch.zeros(size[::-1])
-        
-        
-        
-        try:
-            bbox_size=(bottom-top+DELTA,right-left+DELTA)
-            ones=torch.ones(bbox_size)
-            bbox_mask[top-HALF_DELTA:bottom+HALF_DELTA,left-HALF_DELTA:right+HALF_DELTA]=ones
-        except:
-            bbox_size=(bottom-top,right-left)
-            ones=torch.ones(bbox_size)
-            bbox_mask[top:bottom,left:right]=ones
-        
-        inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0)
+            results.append((result,left,right,top,bottom))
+            frames=[]
+    for value in results:
+        result,left,right,top,bottom=value
+        velocity_f,velocity_s,position_f,position_s=result
+        text_left_bottom=(left,bottom)
+        cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=(0,0,255),thickness=5)
+        cv2.putText(frame,"Velocity ("+str((velocity_f,velocity_s))+")",(left,top-15),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),5,cv2.LINE_AA)
+        cv2.putText(frame,"Position ("+str((velocity_f,velocity_s))+")",(left,top-15),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),5,cv2.LINE_AA)
         
 
-        frames=[]
+
+
+        
 
         
 
@@ -120,30 +152,7 @@ while(video.isOpened()):
 
     frames.append(frame)
     i+=1
-    
-    
-    
-    # depth=tr.functional.crop(depth,top=50,left=0,height=(240-50),width=320)
-    
-    
-    # print('saved')
+
     
 video.release()
 cv2.destroyAllWindows()
-
-# import numpy as np
-# import cv2
-# image=cv2.imread('./sample.jpg')
-# print(isinstance(image,np.ndarray))
-#mpimg.imsave('./download_frames/fromreadvideo'+str(i)+'.png',depth,cmap='gray')
-#depth=np.transpose(depth,(1,2,0))
-
-
-
-
-
-
-# of=ret_of(frame[0],frame[1],of_model,device)
-# bbox_track=ret_bbox([frames[0]],tracker_model)[0] # dictionary with {left,right,bottom,top}
-
-# pass
