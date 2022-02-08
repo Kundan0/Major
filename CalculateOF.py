@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from simplejson import load
 import torch
 from glob import glob
 from PIL import Image
