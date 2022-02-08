@@ -1,3 +1,4 @@
+from re import I
 import cv2
 import os
 import numpy as np
@@ -53,18 +54,43 @@ else:
 
 i=1
 frames=[] # two store two frames for sending to depth ,tracker and of network
-
+JUMP=round(FPS*0.1-1)
+DIFF=6
 while(video.isOpened()):
-    ret,frame=video.read()
-    if ret==False:
-        print("couldn't read the frame ")
+    success,frame=video.read()
+    if success==False:
+        print("Couldn't read the frame ")
         exit()
-    if i%2 ==0 :
-        depth=ret_depth(frames,depth_model) #it is tuple returned for each frame
-        of=ret_of(frame[0],frame[1],of_model,device)
-        bbox_track=ret_bbox([frames[0]],tracker_model)[0] # dictionary with {left,right,bottom,top}
+    if (i+DIFF-1) % DIFF==0 : # we want to skip calculating for each successive 
+                                #frame, so DIFF defines the amount of frames after which we want to calculate again
+                                
+        frames.append(frame) 
+        CUR_INDEX=i
+    if (i==CUR_INDEX+JUMP): # JUMP is for managing frame rate (we have trained for 20 fps)
+        frames.append(frame)
+        #depth processing
+        depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
+        depth0,depth1=depth0.squeeeze(0),depth1.squeeze(0)# removing the channel layer as it is a single channel
+        depth0,depth1=tr.functional.crop(depth0,top=50,left=0,height=190),tr.functional.crop(depth1,top=50,left=0,height=190)# cropping top portion
+        depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),(128,72))).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),(128,72))).to(torch.float32)
+
+        #of processing 
+        of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        of0,of1=of0[50:,:],of1[50:,:]
+        of0,of1=cv2.resize(of0,(128,72)),cv2.resize(of1,(128,72))
+        of0,of1=torch.from_numpy(of0),torch.from_numpy(of1)
+
+        # vehicle identification
+        left=ret_bbox([frames[0]],tracker_model,0.6)[0]["left"]
+        right=ret_bbox([frames[0]],tracker_model,0.6)[0]["right"]
+        top=ret_bbox([frames[0]],tracker_model,0.6)[0]["top"]
+        bottom=ret_bbox([frames[0]],tracker_model,0.6)[0]["bottom"]
+
         
-        pass
+
+        frames=[]
+
+        
 
         
 
@@ -74,8 +100,7 @@ while(video.isOpened()):
     frames.append(frame)
     i+=1
     
-    # depth0=depth[0].squeeeze(0)
-    # depth1=depth[1].squeeze(0)
+    
     
     # depth=tr.functional.crop(depth,top=50,left=0,height=(240-50),width=320)
     
@@ -91,3 +116,13 @@ cv2.destroyAllWindows()
 # print(isinstance(image,np.ndarray))
 #mpimg.imsave('./download_frames/fromreadvideo'+str(i)+'.png',depth,cmap='gray')
 #depth=np.transpose(depth,(1,2,0))
+
+
+
+
+
+
+# of=ret_of(frame[0],frame[1],of_model,device)
+# bbox_track=ret_bbox([frames[0]],tracker_model)[0] # dictionary with {left,right,bottom,top}
+
+# pass

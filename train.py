@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 #colab
 PATH=os.path.join("/content")
 PATHJ=os.path.join("/content","Major")
-
+PATHS=os.path.join(PATH,"drive","State")
 #kaggle
 # PATH=os.path.join("/kaggle","working")
 # PATHJ=os.path.join(PATH,"Major")
@@ -48,7 +48,12 @@ val_dl=DataLoader(val_ds,batch_size=64,shuffle=True)
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
 lr_rate=0.0001
-chkpt_file_pth=os.path.join(PATHJ,"State",model_name)
+try:
+    print("Creating saving directory")
+    os.mkdir(PATHS)
+except Exception as e:
+    print(e)
+chkpt_file_pth=os.path.join(PATHS,model_name)
 model=myModel('1',chkpt_file_pth).to(device)
 train_loss=[]
 validation_loss=[]
