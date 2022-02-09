@@ -149,7 +149,7 @@ while(video.isOpened()):
         cv2.putText(frame,"Velocity "+str((velocity_f,velocity_s)),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         cv2.putText(frame,"Position "+str((velocity_f,velocity_s)),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
-    cv2.imwrite('./output.jpg')
+    cv2.imwrite('./output.jpg',frame)
     video_writer.write(frame)
 
         
