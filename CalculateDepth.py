@@ -19,11 +19,12 @@ loader = ToTensor()
 def image_loader(imgs):
     size=640, 480
     inter_tensor=None
-    for i,img in enumerate(imgs):
+    for img in (imgs):
         if (isinstance(img,np.ndarray)):
             
-             
+            print("before resizing ",img.shape)
             img=cv2.resize(img,(640,480))
+            print("after resizing")
             print("after resizing size ",img)
             img=torch.from_numpy((img/255)).to(torch.float32)
             img=img.permute(2,0,1)

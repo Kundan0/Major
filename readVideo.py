@@ -90,7 +90,7 @@ while(video.isOpened()):
         #depth processing
         print("calculating depth")
         print("size of input ",frame.shape)
-        depth0=ret_depth(frame[0],depth_model)
+        depth0=ret_depth([frame[0]],depth_model)
 
         print(depth0.size())
         
@@ -101,7 +101,7 @@ while(video.isOpened()):
         # 
         print("depth calculated")
         print("second depth")
-        depth1=ret_depth(frame[1],depth_model)
+        depth1=ret_depth([frame[1]],depth_model)
         print("calculated seconnd depth")
         #of processing 
         print("calculating of")
