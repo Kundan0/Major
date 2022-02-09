@@ -15,11 +15,11 @@ import torch
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 #depth
-pretrained_depth= "/home/kundan/Documents/Major/AdaBins/pretrained/AdaBins_kitti.pt"
+pretrained_depth= "./AdaBins_kitti.pt"
 depth_model=load_ADA(pretrained_depth,device)
 
 #optical_flow
-weights_path = './archive/raft-sintel.pth'
+weights_path = './OpticalFlow/archive/raft-sintel.pth'
 of_model=load_RAFT(weights_path,device)
 
 #tracker
@@ -68,8 +68,8 @@ frames=[] # to store two frames for sending to depth ,tracker and of network
 JUMP=round(FPS*0.1-1)
 DIFF=6
 size=(128,72)
-HEIGHT_RATIO=10
-WIDTH_RATIO=10
+HEIGHT_RATIO=int(frame_width/size[0])
+WIDTH_RATIO=int(frame_width/size[1])
 while(video.isOpened()):
     success,frame=video.read()
     if success==False:
