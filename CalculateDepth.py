@@ -24,9 +24,10 @@ def image_loader(imgs):
             
              
             img=cv2.resize(img,(640,480))
-        
-            img=torch.from_numpy((img/255)).to(torch.float32).permute(2,0,1)
-            
+            print("after resizing size ",img)
+            img=torch.from_numpy((img/255)).to(torch.float32)
+            img=img.permute(2,0,1)
+            print(img)
         elif (isinstance(img,str)):
             img=loader(Image.open(img).convert('RGB').resize(size, Image.ANTIALIAS))
             

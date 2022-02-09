@@ -89,7 +89,9 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         print("calculating depth")
+        print("size of input ",frame.shape)
         depth0=ret_depth(frame[0],depth_model)
+
         print(depth0.size())
         
         #depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
