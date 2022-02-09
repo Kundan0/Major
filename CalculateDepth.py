@@ -45,7 +45,7 @@ def ret_depth(batch,model):
     _,depth=model(imgs)
     print(f"took {time()-start}") 
     #print(depth.squeeze(0).squeeze(0).size())
-    return torch.split(depth.detach(),1)
+    return depth.detach().squeeze(0).squeeze(0)
 
 def load_ADA(pretrained,device):
     MIN_DEPTH = 1e-3

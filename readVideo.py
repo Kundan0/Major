@@ -89,11 +89,18 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         print("calculating depth")
-        depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
-        depth0,depth1=depth0.squeeeze(0),depth1.squeeze(0)# removing the channel layer as it is a single channel
-        depth0,depth1=tr.functional.crop(depth0,top=50,left=0,height=190),tr.functional.crop(depth1,top=50,left=0,height=190)# cropping top portion
-        depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32)
+        depth0=ret_depth(frame[0],depth_model)
+        print(depth0.size())
+        
+        #depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
+        # depth0,depth1=depth0.squeeeze(0),depth1.squeeze(0)# removing the channel layer as it is a single channel
+        # depth0,depth1=tr.functional.crop(depth0,top=50,left=0,height=190),tr.functional.crop(depth1,top=50,left=0,height=190)# cropping top portion
+        # depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32)
+        # 
         print("depth calculated")
+        print("second depth")
+        depth1=ret_depth(frame[1],depth_model)
+        print("calculated seconnd depth")
         #of processing 
         print("calculating of")
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
@@ -169,7 +176,7 @@ while(video.isOpened()):
     
     
 
-    frames.append(frame)
+    
     i+=1
 
     
