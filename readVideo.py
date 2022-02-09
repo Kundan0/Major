@@ -25,16 +25,19 @@ of_model=load_RAFT(weights_path,device)
 tracker_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 #Vehicle velocity and position estimation model
-
+print("building type1")
 type1_model=myModel('1',os.path.join(".","State","trained1"))
 #type1_model.load_model()
+print("building type2")
 type2_model=myModel('2',os.path.join(".","State","trained2"))
 #type2_model.load_model()
+print("building type3")
 type3_model=myModel('3',os.path.join(".","State","trained3"))
 #type3_model.load_model()
+print("building type4")
 type4_model=myModel('4',os.path.join(".","State","trained4"))
 #type4_model.load_model()
-
+print("reading video information")
 
 
 #video 
