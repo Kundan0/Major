@@ -1,10 +1,11 @@
 from time import time
 import sys
+import os
 sys.path.append(os.path.abspath('./AdaBins'))
 
 from AdaBins import model_io
 from AdaBins.models import UnetAdaptiveBins
-import os
+
 from PIL import Image
 import torchvision.transforms as transform
 import torch
@@ -39,7 +40,7 @@ def image_loader(imgs):
 def ret_depth(batch,model):
     imgs=image_loader(batch)            
     
-    print(imgs.shape)
+    
     start=time()
     _,depth=model(imgs)
     print(f"took {time()-start}") 
