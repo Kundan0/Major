@@ -1,4 +1,3 @@
-from re import I
 import cv2
 import os
 import numpy as np
@@ -29,20 +28,32 @@ tracker_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 #Vehicle velocity and position estimation model
 
 type1_model=myModel('1',os.path.join(".","State","trained1"))
-type1_model.load_model()
+#type1_model.load_model()
 type2_model=myModel('2',os.path.join(".","State","trained2"))
-type2_model.load_model()
+#type2_model.load_model()
 type3_model=myModel('3',os.path.join(".","State","trained3"))
-type3_model.load_model()
+#type3_model.load_model()
 type4_model=myModel('4',os.path.join(".","State","trained4"))
-type4_model.load_model()
+#type4_model.load_model()
 
 
 
 #video 
 file_path='./download.mp4'
+output_file_name='./output.avi'
 video=cv2.VideoCapture(file_path)
+frame_width = int(video.get(3))
+frame_height = int(video.get(4))
+frame_size=(frame_width,frame_height)
 FPS=video.get(cv2.CAP_PROP_FPS)
+video_writer= cv2.VideoWriter(output_file_name, 
+                         cv2.VideoWriter_fourcc(*'MJPG'),
+                         FPS, frame_size)
+
+#bounding box
+RECT_COLOR=(0,255,255) #yellow
+TEXT_COLOR=(0,255,255)
+
 
 #Checking if the video is loaded successfully
 
@@ -53,7 +64,7 @@ else:
     exit()
 
 i=1
-frames=[] # two store two frames for sending to depth ,tracker and of network
+frames=[] # to store two frames for sending to depth ,tracker and of network
 JUMP=round(FPS*0.1-1)
 DIFF=6
 size=(128,72)
@@ -134,12 +145,12 @@ while(video.isOpened()):
         result,left,right,top,bottom=value
         velocity_f,velocity_s,position_f,position_s=result
         text_left_bottom=(left,bottom)
-        cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=(0,0,255),thickness=5)
-        cv2.putText(frame,"Velocity ("+str((velocity_f,velocity_s))+")",(left,top-15),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),5,cv2.LINE_AA)
-        cv2.putText(frame,"Position ("+str((velocity_f,velocity_s))+")",(left,top-15),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),5,cv2.LINE_AA)
+        cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
+        cv2.putText(frame,"Velocity "+str((velocity_f,velocity_s)),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"Position "+str((velocity_f,velocity_s)),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
 
-
+    video_writer.write(frame)
 
         
 
@@ -155,4 +166,4 @@ while(video.isOpened()):
 
     
 video.release()
-cv2.destroyAllWindows()
+video_writer.release()
