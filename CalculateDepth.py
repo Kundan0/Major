@@ -16,27 +16,28 @@ from torchvision.transforms import ToPILImage,ToTensor
 unloader = ToPILImage()
 loader = ToTensor()  
 
-def image_loader(imgs):
+def image_loader(img):
     size=640, 480
     inter_tensor=None
-    for img in (imgs):
-        if (isinstance(img,np.ndarray)):
+    if (isinstance(img,np.ndarray)):
             
-            print("before resizing ",img.shape)
-            img=cv2.resize(img,(640,480))
-            print("after resizing")
-            print("after resizing size ",img)
-            img=torch.from_numpy((img/255)).to(torch.float32)
-            img=img.permute(2,0,1)
-            print(img)
-        elif (isinstance(img,str)):
+        print("before resizing ",img.shape)
+        img=cv2.resize(img,(640,480))
+        print("after resizing")
+        print("after resizing size ",img)
+        img=torch.from_numpy((img/255)).to(torch.float32)
+        img=img.permute(2,0,1)
+        print(img)
+    elif (isinstance(img,str)):
             img=loader(Image.open(img).convert('RGB').resize(size, Image.ANTIALIAS))
             
-        if inter_tensor!=None:
-            inter_tensor=torch.cat((inter_tensor,img.unsqueeze(0)),dim=0)
-        else:
-            inter_tensor=img.unsqueeze(0)
-    return inter_tensor
+    # for img in (imgs):
+       
+    #     if inter_tensor!=None:
+    #         inter_tensor=torch.cat((inter_tensor,img.unsqueeze(0)),dim=0)
+    #     else:
+    #         inter_tensor=img.unsqueeze(0)
+    return img
     
     
 def ret_depth(batch,model):
