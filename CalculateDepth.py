@@ -1,4 +1,7 @@
 from time import time
+import sys
+sys.path.append(os.path.abspath('./AdaBins'))
+
 from AdaBins import model_io
 from AdaBins.models import UnetAdaptiveBins
 import os

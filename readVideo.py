@@ -5,11 +5,10 @@ from CalculateDepth import ret_depth,load_ADA
 from CalculateOF import ret_of,load_RAFT
 from tracker import ret_bbox
 from ClassModel import myModel
-from AdaBins import model_io
-from AdaBins.models import UnetAdaptiveBins
 import matplotlib.image as mpimg
 import torchvision.transforms as tr
 import torch
+from sys import exit
 
 #device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
