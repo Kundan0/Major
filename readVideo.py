@@ -71,6 +71,7 @@ HEIGHT_RATIO=int(frame_width/size[0])
 WIDTH_RATIO=int(frame_width/size[1])
 results=[]
 while(video.isOpened()):
+    print(" idx ",i)
     success,frame=video.read()
     if success==False:
         print("Couldn't read the frame ")
@@ -84,19 +85,23 @@ while(video.isOpened()):
     if (i==CUR_INDEX+JUMP): # JUMP is for managing frame rate (we have trained for 20 fps)
         frames.append(frame)
         #depth processing
+        print("calculating depth")
         depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
         depth0,depth1=depth0.squeeeze(0),depth1.squeeze(0)# removing the channel layer as it is a single channel
         depth0,depth1=tr.functional.crop(depth0,top=50,left=0,height=190),tr.functional.crop(depth1,top=50,left=0,height=190)# cropping top portion
         depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32)
-
+        print("depth calculated")
         #of processing 
+        print("calculating of")
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0),torch.from_numpy(of1)
-
+        print("calculated of ")
         # vehicle identification
-        bbox=ret_bbox([frames[0]],tracker_model,0.6)[0]
+        print("tracking")
+        bbox=ret_bbox([frames[0]],tracker_model,0.66)[0]
+        print("tracked")
         num_vehicles=len(bbox)
         results=[]
         for vehicle in bbox:
