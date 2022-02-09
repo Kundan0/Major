@@ -69,6 +69,7 @@ DIFF=6
 size=(128,72)
 HEIGHT_RATIO=int(frame_width/size[0])
 WIDTH_RATIO=int(frame_width/size[1])
+results=[]
 while(video.isOpened()):
     success,frame=video.read()
     if success==False:
