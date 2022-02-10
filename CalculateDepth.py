@@ -23,11 +23,11 @@ def image_loader(img):
             
         print("before resizing ",img.shape)
         img=cv2.resize(img,(640,480))
-        print("after resizing")
-        print("after resizing size ",img)
+        
+        print("after resizing size ",img.shape)
         img=torch.from_numpy((img/255)).to(torch.float32)
         img=img.permute(2,0,1)
-        print(img)
+        print("after permuting",img.shape)
     elif (isinstance(img,str)):
             img=loader(Image.open(img).convert('RGB').resize(size, Image.ANTIALIAS))
             
@@ -37,7 +37,7 @@ def image_loader(img):
     #         inter_tensor=torch.cat((inter_tensor,img.unsqueeze(0)),dim=0)
     #     else:
     #         inter_tensor=img.unsqueeze(0)
-    return img
+    return img.unsqueeze(0)
     
     
 def ret_depth(batch,model):
