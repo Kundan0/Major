@@ -88,28 +88,16 @@ while(video.isOpened()):
     if (i==CUR_INDEX+JUMP): # JUMP is for managing frame rate (we have trained for 20 fps)
         frames.append(frame)
         #depth processing
-        print("calculating depth")
-        print("size of input ",frame.shape)
-        depth0=ret_depth(frames[0],depth_model)
-
-        print(depth0.size())
         
-        #depth0,depth1=ret_depth(frames,depth_model) #it is tuple returned for each frame
-        # depth0,depth1=depth0.squeeeze(0),depth1.squeeze(0)# removing the channel layer as it is a single channel
-        # depth0,depth1=tr.functional.crop(depth0,top=50,left=0,height=190),tr.functional.crop(depth1,top=50,left=0,height=190)# cropping top portion
-        # depth0,depth1=torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32),torch.from_numpy(cv2.resize(depth0.numpy(),size)).to(torch.float32)
-        # 
-        print("depth calculated")
-        print("second depth")
+        depth0=ret_depth(frames[0],depth_model) # torch.size([240,320])
         depth1=ret_depth(frames[1],depth_model)
-        print("calculated seconnd depth")
         #of processing 
-        print("calculating of")
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0),torch.from_numpy(of1)
-        print("calculated of ")
+        print("of output size",of0.shape)
+
         # vehicle identification
         print("tracking")
         bbox=ret_bbox([frames[0]],tracker_model,0.66)[0]
@@ -118,10 +106,10 @@ while(video.isOpened()):
         results=[]
         for vehicle in bbox:
             
-            left=int(bbox["left"])
-            right=int(bbox["right"])
-            top=int(bbox["top"])
-            bottom=int(bbox["bottom"])
+            left=int(vehicle["left"])
+            right=int(vehicle["right"])
+            top=int(vehicle["top"])
+            bottom=int(vehicle["bottom"])
             area=(right-left)*(bottom-top)
             
             left_bbox=int(left/WIDTH_RATIO)

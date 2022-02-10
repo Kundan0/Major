@@ -21,22 +21,15 @@ def image_loader(img):
     inter_tensor=None
     if (isinstance(img,np.ndarray)):
             
-        print("before resizing ",img.shape)
-        img=cv2.resize(img,(640,480))
         
-        print("after resizing size ",img.shape)
+        img=cv2.resize(img,(640,480))
+    
         img=torch.from_numpy((img/255)).to(torch.float32)
         img=img.permute(2,0,1)
-        print("after permuting",img.shape)
     elif (isinstance(img,str)):
             img=loader(Image.open(img).convert('RGB').resize(size, Image.ANTIALIAS))
             
-    # for img in (imgs):
-       
-    #     if inter_tensor!=None:
-    #         inter_tensor=torch.cat((inter_tensor,img.unsqueeze(0)),dim=0)
-    #     else:
-    #         inter_tensor=img.unsqueeze(0)
+
     return img.unsqueeze(0)
     
     
@@ -68,7 +61,7 @@ if __name__=="__main__":
     model=load_ADA(pretrained,device)
     imgs=['./sample2.png']
 
-    depth=ret_depth(imgs,model) # now depth is a tuple 
+    depth=ret_depth(imgs[0],model) #  
     # print(depth.detach().size())
     # mpimg.imsave('./depth2.jpg',depth.detach(),cmap='gray')
 
