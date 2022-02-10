@@ -89,8 +89,8 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model) # torch.size([240,320])
-        depth1=ret_depth(frames[1],depth_model)
+        depth0=ret_depth(frames[0],depth_model,device) # torch.size([240,320])
+        depth1=ret_depth(frames[1],depth_model,device)
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]

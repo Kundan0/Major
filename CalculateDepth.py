@@ -33,12 +33,12 @@ def image_loader(img):
     return img.unsqueeze(0)
     
     
-def ret_depth(batch,model):
+def ret_depth(batch,model,device):
     imgs=image_loader(batch)            
     
     
     start=time()
-    _,depth=model(imgs)
+    _,depth=model(imgs.to(device))
     print(f"took {time()-start}") 
     #print(depth.squeeze(0).squeeze(0).size())
     return depth.detach().squeeze(0).squeeze(0)
