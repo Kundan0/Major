@@ -137,7 +137,7 @@ while(video.isOpened()):
                 bbox_size=(bottom_bbox-top_bbox,right_bbox-left_bbox)
                 ones=torch.ones(bbox_size)
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
-                bbox_mask.to(device)
+            bbox_mask.to(device)    
             inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
             if area<2500:
                 result=type1_model(inter_tensor)
