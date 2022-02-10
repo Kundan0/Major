@@ -94,14 +94,14 @@ while(video.isOpened()):
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
-        depth0=tr.functional.resize(depth0,(72,128))
-        depth1=tr.functional.resize(depth1,(72,128))
+        depth0=tr.functional.resize(depth0,(72,128)).to(device)
+        depth1=tr.functional.resize(depth1,(72,128)).to(device)
         
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
-        of0,of1=torch.from_numpy(of0),torch.from_numpy(of1)
+        of0,of1=torch.from_numpy(of0).to(device),torch.from_numpy(of1).to(device)
         print("of output size",of0.shape)
 
         # vehicle identification
@@ -137,7 +137,7 @@ while(video.isOpened()):
                 bbox_size=(bottom_bbox-top_bbox,right_bbox-left_bbox)
                 ones=torch.ones(bbox_size)
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
-            
+                bbox_mask.to(device)
             inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
             if area<2500:
                 result=type1_model(inter_tensor)
