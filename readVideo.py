@@ -90,7 +90,13 @@ while(video.isOpened()):
         #depth processing
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([240,320])
-        depth1=ret_depth(frames[1],depth_model,device)
+        depth1=ret_depth(frames[1],depth_model,device) 
+        depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
+        depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
+        
+        depth0=tr.functional.resize(depth0,(72,128))
+        depth1=tr.functional.resize(depth1,(72,128))
+        
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
@@ -151,8 +157,8 @@ while(video.isOpened()):
         velocity_f,velocity_s,position_f,position_s=result
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
-        cv2.putText(frame,"Velocity "+str((velocity_f,velocity_s)),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
-        cv2.putText(frame,"Position "+str((velocity_f,velocity_s)),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"V "+str((velocity_f,velocity_s)),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"P "+str((velocity_f,velocity_s)),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
     cv2.imwrite('./output.jpg',frame)
     video_writer.write(frame)
