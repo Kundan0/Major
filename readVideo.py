@@ -111,7 +111,7 @@ while(video.isOpened()):
 
         # vehicle identification
         
-        bbox=ret_bbox([frames[0]],tracker_model,0.2)[0]
+        bbox=ret_bbox([frames[0]],tracker_model,0.3)[0]
         num_vehicles=len(bbox)
         print(f"found {num_vehicles} no of vehicles")
         results=[]
@@ -163,6 +163,7 @@ while(video.isOpened()):
             
             
             result=result.squeeze(0)
+            print("result",result)
             results.append((result,left,right,top,bottom))
             
             frames=[]
@@ -174,7 +175,7 @@ while(video.isOpened()):
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
         cv2.putText(frame,"V "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
-        cv2.putText(frame,"P "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"P "+str((round(position_f.item(),2),round(position_s.item(),2))),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
     
     video_writer.write(frame)
