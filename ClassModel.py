@@ -107,8 +107,7 @@ class myModel(nn.Module):
         image,label=batch
         result=self(image)
         loss=self.loss(result,label)
-        print("actual ",label)
-        print("predicted",result)
+        
         print("val loss for this batch ",loss.detach().item())
         return loss.detach()
     
