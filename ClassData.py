@@ -84,7 +84,7 @@ class myDataset(Dataset):
 
 
         
-        
-
+        print("before permuting ",inter_tensor.shape)
+        print("before sending",inter_tensor.permute(0,2,1).shape)
         return (inter_tensor.permute(0,2,1),label)              
         

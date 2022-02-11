@@ -153,7 +153,8 @@ while(video.isOpened()):
         
             
         
-            inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
+            inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
+            print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
             if area<2500:
                 result=type1_model(inter_tensor)
