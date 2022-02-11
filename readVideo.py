@@ -161,12 +161,13 @@ while(video.isOpened()):
             #convert result to tuple using torch.split(result,1)
             print(result)
             print(result.size())
+            result=result.squeeze(1)
             results.append((result,left,right,top,bottom))
             frames=[]
     for value in results:
         result,left,right,top,bottom=value
         print(left,right,top,bottom)
-        velocity_f,velocity_s,position_f,position_s=result
+        velocity_f,velocity_s,position_f,position_s=result[0],result[1],result[2],result[3]
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
         cv2.putText(frame,"V "+str((velocity_f,velocity_s)),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
