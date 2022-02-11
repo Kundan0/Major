@@ -99,8 +99,9 @@ while(video.isOpened()):
         
         depth0=tr.functional.resize(depth0,(72,128)).to(device=device) # size(1,72,128)
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
-        depthimg0=np.transpose(depth0.numpy(),(1,2,0))
-        depthimg1=np.transpose(depth1.numpy(),(1,2,0))
+        print("saving")
+        depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
+        depthimg1=np.transpose(depth1.cpu().numpy(),(1,2,0))
         cv2.imwrite('./depth0.jpg',depthimg0)
         cv2.imwrite('./depth1.jpg',depthimg1)
         #of processing 
@@ -111,8 +112,8 @@ while(video.isOpened()):
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
     
-        ofimage0=np.transpose(of0.numpy(),(1,2,0))
-        ofimage1=np.transpose(of1.numpy(),(1,2,0))
+        ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
+        ofimage1=np.transpose(of1.cpu().numpy(),(1,2,0))
         cv2.imwrite('./of0.jpg',ofimage0)
         cv2.imwrite('./of1.jpg',ofimage1)
 
