@@ -90,8 +90,8 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device).squeeze(0).squeeze(0) # torch.size([240,320])
-        depth1=ret_depth(frames[1],depth_model,device).squeeze(0).squeeze(0)
+        depth0=ret_depth(frames[0],depth_model,device).squeeze(0) # torch.size([240,320])
+        depth1=ret_depth(frames[1],depth_model,device).squeeze(0)
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
@@ -102,7 +102,7 @@ while(video.isOpened()):
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
-        of0,of1=torch.from_numpy(of0).to(device=device),torch.from_numpy(of1).to(device=device)
+        of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
         print("of output size",of0.shape)
         print("device type ",depth0.size())
         print("device type ",depth1.size())
@@ -143,10 +143,10 @@ while(video.isOpened()):
                 bbox_size=(bottom_bbox-top_bbox,right_bbox-left_bbox)
                 ones=torch.ones(bbox_size,device=device)
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
-            bbox_mask  
-            print("device type ",bbox_mask.size())
         
-            inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
+            
+        
+            inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
             if area<2500:
                 result=type1_model(inter_tensor)
             elif area>=2500 and area<5000:
