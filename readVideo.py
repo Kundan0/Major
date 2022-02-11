@@ -115,8 +115,8 @@ while(video.isOpened()):
         # vehicle identification
         print("tracking")
         bbox=ret_bbox([frames[0]],tracker_model,0.66)[0]
-        print("tracked")
         num_vehicles=len(bbox)
+        print(f"found {num_vehicles} no of vehicles")
         results=[]
         for vehicle in bbox:
             
@@ -149,29 +149,36 @@ while(video.isOpened()):
             
         
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
+            print("area of vehicle",area)
             if area<2500:
                 result=type1_model(inter_tensor)
+                print("from <2500 ",result.detach())
             elif area>=2500 and area<5000:
                 result=type2_model(inter_tensor)
+                print("from <2500 ",result.detach())
             elif area>=5000 and area < 7500:
                 result=type3_model(inter_tensor)
+                print("from <2500 ",result.detach())
             elif area >7500:
                 result=type4_model(inter_tensor)
+                print("from <2500 ",result.detach())
             
-            #convert result to tuple using torch.split(result,1)
+            
             print(result)
             print(result.size())
             result=result.squeeze(0)
             results.append((result,left,right,top,bottom))
+            print("length of results",len(results))
             frames=[]
     for value in results:
+        print(" i am inside loop results")
         result,left,right,top,bottom=value
         print(left,right,top,bottom)
         velocity_f,velocity_s,position_f,position_s=result[0],result[1],result[2],result[3]
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
-        cv2.putText(frame,"V "+str((velocity_f,velocity_s)),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
-        cv2.putText(frame,"P "+str((velocity_f,velocity_s)),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"V "+str((velocity_f.item(),velocity_s.item())),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"P "+str((velocity_f.item(),velocity_s.item())),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
     cv2.imwrite('./output.jpg',frame)
     video_writer.write(frame)
