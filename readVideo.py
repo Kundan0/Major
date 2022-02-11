@@ -161,7 +161,7 @@ while(video.isOpened()):
             #convert result to tuple using torch.split(result,1)
             print(result)
             print(result.size())
-            result=result.squeeze(1)
+            result=result.squeeze(0)
             results.append((result,left,right,top,bottom))
             frames=[]
     for value in results:
