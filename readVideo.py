@@ -90,8 +90,8 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device) # torch.size([240,320])
-        depth1=ret_depth(frames[1],depth_model,device) 
+        depth0=ret_depth(frames[0],depth_model,device).squeeze(0).squeeze(0) # torch.size([240,320])
+        depth1=ret_depth(frames[1],depth_model,device).squeez(0).squeeze(0)
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
