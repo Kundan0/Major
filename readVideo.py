@@ -90,13 +90,15 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device).squeeze(0) # torch.size([240,320])
-        depth1=ret_depth(frames[1],depth_model,device).squeeze(0)
+        depth0=ret_depth(frames[0],depth_model,device).squeeze(0).squueze(0) # torch.size([240,320])
+        depth1=ret_depth(frames[1],depth_model,device).squeeze(0).squeeze(0)
+        print("device type ",depth0.size())
+        print("device type ",depth1.size())
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
-        depth0=tr.functional.resize(depth0,(72,128)).to(device=device)
-        depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
+        depth0=tr.functional.resize(depth0,(72,128)).to(device=device).unsquueze(0)
+        depth1=tr.functional.resize(depth1,(72,128)).to(device=device).unsquueze(0)
         
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
