@@ -90,7 +90,7 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device).squeeze(0).squueze(0) # torch.size([240,320])
+        depth0=ret_depth(frames[0],depth_model,device).squeeze(0).squeeze(0) # torch.size([240,320])
         depth1=ret_depth(frames[1],depth_model,device).squeeze(0).squeeze(0)
         print("device type ",depth0.size())
         print("device type ",depth1.size())
