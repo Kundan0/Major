@@ -10,6 +10,7 @@ import matplotlib.image as mpimg
 import torchvision.transforms as tr
 import torch
 from sys import exit
+from time import time
 
 #device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -100,7 +101,9 @@ while(video.isOpened()):
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         
         #of processing 
+        start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        print(f"for of took {time()-start}")
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
@@ -108,7 +111,7 @@ while(video.isOpened()):
 
         # vehicle identification
         
-        bbox=ret_bbox([frames[0]],tracker_model,0.66)[0]
+        bbox=ret_bbox([frames[0]],tracker_model,0.2)[0]
         num_vehicles=len(bbox)
         print(f"found {num_vehicles} no of vehicles")
         results=[]
@@ -166,7 +169,7 @@ while(video.isOpened()):
     for value in results:
         
         result,left,right,top,bottom=value
-        print(left,right,top,bottom)
+        
         velocity_f,velocity_s,position_f,position_s=result[0],result[1],result[2],result[3]
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
