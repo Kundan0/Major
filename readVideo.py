@@ -36,8 +36,8 @@ print("building type3")
 type3_model=myModel('3',os.path.join(".","State","trained3")).to(device)
 #type3_model.load_model()
 print("building type4")
-type4_model=myModel('4',os.path.join(".","State","trained4")).to(device)
-#type4_model.load_model()
+type4_model=myModel('4',"./trained4").to(device)
+type4_model.load_model()
 print("reading video information")
 
 
@@ -69,13 +69,13 @@ else:
 i=1
 frames=[] # to store two frames for sending to depth ,tracker and of network
 JUMP=round(FPS*0.1-1)
-DIFF=6
+DIFF=10
 size=(128,72)
 HEIGHT_RATIO=int(frame_width/size[0])
 WIDTH_RATIO=int(frame_width/size[1])
 results=[]
 while(video.isOpened()):
-    print(" idx ",i)
+    
     success,frame=video.read()
     if success==False:
         print("Couldn't read the frame ")
@@ -92,8 +92,7 @@ while(video.isOpened()):
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
-        print("device type ",depth0.size())
-        print("device type ",depth1.size())
+        
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
@@ -105,15 +104,10 @@ while(video.isOpened()):
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
-        print("of output size",of0.shape)
-        print("device type ",depth0.size())
-        print("device type ",depth1.size())
-        print("device type ",of0.size())
-        print("device type ",of1.size())
         
 
         # vehicle identification
-        print("tracking")
+        
         bbox=ret_bbox([frames[0]],tracker_model,0.66)[0]
         num_vehicles=len(bbox)
         print(f"found {num_vehicles} no of vehicles")
@@ -152,35 +146,34 @@ while(video.isOpened()):
             print("area of vehicle",area)
             if area<2500:
                 result=type1_model(inter_tensor)
-                print("from <2500 ",result.detach())
+                
             elif area>=2500 and area<5000:
                 result=type2_model(inter_tensor)
-                print("from <2500 ",result.detach())
+                
             elif area>=5000 and area < 7500:
                 result=type3_model(inter_tensor)
-                print("from <2500 ",result.detach())
+                
             elif area >7500:
                 result=type4_model(inter_tensor)
-                print("from <2500 ",result.detach())
+                
             
             
-            print(result)
-            print(result.size())
+            
             result=result.squeeze(0)
             results.append((result,left,right,top,bottom))
-            print("length of results",len(results))
+            
             frames=[]
     for value in results:
-        print(" i am inside loop results")
+        
         result,left,right,top,bottom=value
         print(left,right,top,bottom)
         velocity_f,velocity_s,position_f,position_s=result[0],result[1],result[2],result[3]
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
-        cv2.putText(frame,"V "+str((velocity_f.item(),velocity_s.item())),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
-        cv2.putText(frame,"P "+str((velocity_f.item(),velocity_s.item())),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"V "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
+        cv2.putText(frame,"P "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
-    cv2.imwrite('./output.jpg',frame)
+    
     video_writer.write(frame)
 
         

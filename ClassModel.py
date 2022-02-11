@@ -128,6 +128,7 @@ class myModel(nn.Module):
         torch.save(checkpoint,self.checkpoint_path)
         
     def load_model(self,optimizer=None):
+        self.eval()
         checkpoint=torch.load(self.checkpoint_path)
         self.load_state_dict(checkpoint['model'])
         if optimizer==None:
