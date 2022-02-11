@@ -131,19 +131,19 @@ while(video.isOpened()):
             DELTA=10
             HALF_DELTA=int(DELTA/2)
             
-            bbox_mask=torch.zeros(size[::-1])
+            bbox_mask=torch.zeros(size[::-1],device=device)
             
             
             
             try:
                 bbox_size=(bottom_bbox-top_bbox+DELTA,right_bbox-left_bbox+DELTA)
-                ones=torch.ones(bbox_size)
+                ones=torch.ones(bbox_size,device=device)
                 bbox_mask[top_bbox-HALF_DELTA:bottom_bbox+HALF_DELTA,left_bbox-HALF_DELTA:right_bbox+HALF_DELTA]=ones
             except:
                 bbox_size=(bottom_bbox-top_bbox,right_bbox-left_bbox)
-                ones=torch.ones(bbox_size)
+                ones=torch.ones(bbox_size,device=device)
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
-            bbox_mask.to(device=device)    
+            bbox_mask  
             print("device type ",torch.get_device(bbox_mask))
         
             inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
@@ -157,11 +157,13 @@ while(video.isOpened()):
                 result=type4_model(inter_tensor)
             
             #convert result to tuple using torch.split(result,1)
-
+            print(result)
+            print(result.size())
             results.append((result,left,right,top,bottom))
             frames=[]
     for value in results:
         result,left,right,top,bottom=value
+        print(left,right,top,bottom)
         velocity_f,velocity_s,position_f,position_s=result
         text_left_bottom=(left,bottom)
         cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
