@@ -104,10 +104,10 @@ while(video.isOpened()):
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0).to(device=device),torch.from_numpy(of1).to(device=device)
         print("of output size",of0.shape)
-        print("device type ",torch.get_device(depth0))
-        print("device type ",torch.get_device(depth1))
-        print("device type ",torch.get_device(of0))
-        print("device type ",torch.get_device(of1))
+        print("device type ",depth0.size())
+        print("device type ",depth1.size())
+        print("device type ",of0.size())
+        print("device type ",of1.size())
         
 
         # vehicle identification
@@ -144,7 +144,7 @@ while(video.isOpened()):
                 ones=torch.ones(bbox_size,device=device)
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
             bbox_mask  
-            print("device type ",torch.get_device(bbox_mask))
+            print("device type ",bbox_mask.size())
         
             inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
             if area<2500:
