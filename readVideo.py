@@ -1,3 +1,4 @@
+from cupshelpers import Device
 import cv2
 import os
 import numpy as np
@@ -94,15 +95,20 @@ while(video.isOpened()):
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
-        depth0=tr.functional.resize(depth0,(72,128)).to(device)
-        depth1=tr.functional.resize(depth1,(72,128)).to(device)
+        depth0=tr.functional.resize(depth0,(72,128)).to(device=device)
+        depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         
         #of processing 
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         of0,of1=of0[50:,:],of1[50:,:]
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
-        of0,of1=torch.from_numpy(of0).to(device),torch.from_numpy(of1).to(device)
+        of0,of1=torch.from_numpy(of0).to(device=device),torch.from_numpy(of1).to(device=device)
         print("of output size",of0.shape)
+        print("device type ",torch.get_device(depth0))
+        print("device type ",torch.get_device(depth1))
+        print("device type ",torch.get_device(of0))
+        print("device type ",torch.get_device(of1))
+        
 
         # vehicle identification
         print("tracking")
@@ -137,7 +143,9 @@ while(video.isOpened()):
                 bbox_size=(bottom_bbox-top_bbox,right_bbox-left_bbox)
                 ones=torch.ones(bbox_size)
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
-            bbox_mask.to(device)    
+            bbox_mask.to(device=device)    
+            print("device type ",torch.get_device(bbox_mask))
+        
             inter_tensor=torch.cat((depth0.unsqueeze(0),of0.unsqueeze(0),of1.unsqueeze(0),depth1.unsqueeze(0),bbox_mask.unsqueeze(0)),dim=0).unsqueeze(0)
             if area<2500:
                 result=type1_model(inter_tensor)
