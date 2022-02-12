@@ -87,6 +87,9 @@ if __name__=="__main__":
 
     file1=cv2.imread('./001.jpg')
     file2=cv2.imread('./002.jpg')
+    file1=cv2.cvtColor(file1,cv2.COLOR_BGR2RGB)
+    file2=cv2.cvtColor(file2,cv2.COLOR_BGR2RGB)
+    
     flows=ret_of(file1,file2,model,device)
     print(flows[0])
 

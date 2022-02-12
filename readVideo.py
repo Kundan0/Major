@@ -81,6 +81,7 @@ print("jump ",JUMP)
 while(video.isOpened()):
     
     success,frame=video.read()
+    frame=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
     if success==False:
         print("Couldn't read the frame ")
         exit()
@@ -98,6 +99,8 @@ while(video.isOpened()):
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
+        print("depth0",depth0)
+        print("depth1",depth1)
         depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
         depthimg1=np.transpose(depth1.cpu().numpy(),(1,2,0))
         cv2.imwrite('./depth0.jpg',depthimg0)
