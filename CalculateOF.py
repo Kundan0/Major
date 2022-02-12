@@ -85,10 +85,10 @@ if __name__=="__main__":
     weights_path = './archive/raft-sintel.pth'
     model=load_RAFT(weights_path,device)
 
-    file1=cv2.imread('./sample1.jpg')
-    file2=cv2.imread('./sample2.jpg')
+    file1=cv2.imread('./001.jpg')
+    file2=cv2.imread('./002.jpg')
     flows=ret_of(file1,file2,model,device)
-    
+    print(flows[0])
 
     
 

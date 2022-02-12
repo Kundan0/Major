@@ -75,6 +75,9 @@ size=(128,72)
 HEIGHT_RATIO=int(frame_width/size[0])
 WIDTH_RATIO=int(frame_width/size[1])
 results=[]
+
+print("fps",FPS)
+print("jump ",JUMP)
 while(video.isOpened()):
     
     success,frame=video.read()
@@ -88,6 +91,7 @@ while(video.isOpened()):
         CUR_INDEX=i
         print("first calculated frame ",i)
     if (i==CUR_INDEX+JUMP): # JUMP is for managing frame rate (we have trained for 20 fps)
+        print("cur index inside second",CUR_INDEX)
         print("second calculated frame ",i)
         frames.append(frame)
         #depth processing
@@ -154,7 +158,7 @@ while(video.isOpened()):
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
         
             
-            cv2.imwrite('bbox',bbox_mask)
+            cv2.imwrite('bbox',bbox_mask.cpu().numpy())
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
@@ -189,7 +193,7 @@ while(video.isOpened()):
         cv2.putText(frame,"V "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         cv2.putText(frame,"P "+str((round(position_f.item(),2),round(position_s.item(),2))),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         
-    
+    i+=1
     video_writer.write(frame)
 
         
@@ -202,7 +206,7 @@ while(video.isOpened()):
     
 
     
-    i+=1
+    
 
     
 video.release()
