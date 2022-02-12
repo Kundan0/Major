@@ -86,36 +86,38 @@ while(video.isOpened()):
                                 
         frames.append(frame) 
         CUR_INDEX=i
-    
+        print("first calculated frame ",i)
     if (i==CUR_INDEX+JUMP): # JUMP is for managing frame rate (we have trained for 20 fps)
+        print("second calculated frame ",i)
         frames.append(frame)
         #depth processing
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
-        
+        depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
+        depthimg1=np.transpose(depth1.cpu().numpy(),(1,2,0))
+        cv2.imwrite('./depth0.jpg',depthimg0)
+        cv2.imwrite('./depth1.jpg',depthimg1)
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
         depth0=tr.functional.resize(depth0,(72,128)).to(device=device) # size(1,72,128)
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         print("saving")
-        depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
-        depthimg1=np.transpose(depth1.cpu().numpy(),(1,2,0))
-        cv2.imwrite('./depth0.jpg',depthimg0)
-        cv2.imwrite('./depth1.jpg',depthimg1)
+        
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         print(f"for of took {time()-start}")
         of0,of1=of0[50:,:],of1[50:,:]
+        cv2.imwrite('./of0.jpg',of0)
+        cv2.imwrite('./of1.jpg',of1)
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
     
-        ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
-        ofimage1=np.transpose(of1.cpu().numpy(),(1,2,0))
-        cv2.imwrite('./of0.jpg',ofimage0)
-        cv2.imwrite('./of1.jpg',ofimage1)
+        # ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
+        # ofimage1=np.transpose(of1.cpu().numpy(),(1,2,0))
+        
 
         # vehicle identification
         
@@ -152,7 +154,7 @@ while(video.isOpened()):
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
         
             
-        
+            cv2.imwrite('bbox',bbox_mask)
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
