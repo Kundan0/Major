@@ -126,7 +126,7 @@ while(video.isOpened()):
     
         print("depth_tensor directly processed ,depth0 ",depth0,"depth1",depth1)
         
-        print("difference depth0",depth0-depth_tensor1.)
+        print("difference depth0",depth0-depth_tensor1.to(device))
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
