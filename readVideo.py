@@ -105,16 +105,19 @@ while(video.isOpened()):
 
         depth0=tr.ToTensor()(tr.ToPILImage()(depthorg0.detach().cpu())).to(device)
         depth1=tr.ToTensor()(tr.ToPILImage()(depthorg1.detach().cpu())).to(device)
-        print("pil to tensor",depth0)
+        print("pil to tensor ",depth0,"depth 1",depth1)
         mpimg.imsave('./mpdepth0.jpg',depthorg0.detach().squeeze(0).cpu(),cmap='gray')
         mpimg.imsave('./mpdepth1.jpg',depthorg1.detach().squeeze(0).cpu(),cmap='gray')
+        print("depth_tensor1",tr.ToTensor()(Image.open('./mpdepth0.jpg'))[0])
+            
+        print("depth_tensor2",tr.ToTensor()(Image.open('./mpdepth1.jpg'))[0])
         
 
 
         depth_tensor1=tr.ToTensor()(Image.open('./mpdepth0.jpg').crop((0,50,320,240)).resize((128,72)))[0]
             
         depth_tensor2=tr.ToTensor()(Image.open('./mpdepth1.jpg').crop((0,50,320,240)).resize((128,72)))[0]
-
+        
         print("depth_tensor from saving and reading ,depth0 ",depth_tensor1,"depth1",depth_tensor2)
         
         # depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
