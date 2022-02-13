@@ -99,12 +99,12 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depthorg0=ret_depth(frames[0],depth_model,device)/255. # torch.size([1,240,320])
-        depthorg1=ret_depth(frames[1],depth_model,device)/255.
+        depthorg0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
+        depthorg1=ret_depth(frames[1],depth_model,device)
         
         
-        depth0=tr.ToTensor()(tr.ToPILImage()(depthorg0.detach().cpu())).to(device)
-        depth1=tr.ToTensor()(tr.ToPILImage()(depthorg1.detach().cpu())).to(device)
+        depth0=tr.ToTensor()(tr.ToPILImage()((depthorg0/255.).detach().cpu())).to(device)
+        depth1=tr.ToTensor()(tr.ToPILImage()((depthorg1/255.).detach().cpu())).to(device)
 
         print("converted to pil then to tensor ,depth 0 obtained\n ",depth0)
         print("its shape is ",depth0.shape)
