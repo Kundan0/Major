@@ -44,6 +44,10 @@ type4_model.load_model()
 print("reading video information")
 
 
+
+
+
+
 #video 
 file_path='./imgs_video.avi'
 output_file_name='./output.avi'
@@ -55,9 +59,10 @@ FPS=video.get(cv2.CAP_PROP_FPS)
 video_writer= cv2.VideoWriter(output_file_name, 
                          cv2.VideoWriter_fourcc(*'MJPG'),
                          FPS, frame_size)
-
+ROI=(frame_width/2,frame_width,frame_height/3,frame_height) # Region Of Interest (left,right,top,bottom)
 #bounding box
-RECT_COLOR=(0,255,255) #yellow
+RECT_COLOR_BBOX=(0,255,255) #yellow #BGR
+RECT_COLOR_ROI=(0,255,0)
 TEXT_COLOR=(0,255,255)
 
 
@@ -118,8 +123,8 @@ while(video.isOpened()):
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
-        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
-        mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
+        mpimg.imsave('./of0.jpg',of0.cpu()/255.,cmap='gray')
+        mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
         
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
@@ -138,7 +143,7 @@ while(video.isOpened()):
 
         # vehicle identification
         
-        bbox=ret_bbox([frames[0]],tracker_model,0.3)[0]
+        bbox=ret_bbox([frames[0]],tracker_model,0.3,ROI)[0]
         num_vehicles=len(bbox)
         print(f"found {num_vehicles} no of vehicles")
         results=[]
@@ -203,10 +208,10 @@ while(video.isOpened()):
         
         velocity_f,velocity_s,position_f,position_s=result[0],result[1],result[2],result[3]
         text_left_bottom=(left,bottom)
-        cv2.rectangle(frame,(left-5,top-5),(right+5,bottom+5),color=RECT_COLOR,thickness=2)
+        cv2.rectangle(frame,(left,top),(right,bottom),color=RECT_COLOR_BBOX,thickness=2)
         cv2.putText(frame,"V "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         cv2.putText(frame,"P "+str((round(position_f.item(),2),round(position_s.item(),2))),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
-        
+        cv2.rectangle(frame,(ROI[0],ROI[2]),(ROI[1],ROI[3]),color=RECT_COLOR_ROI,thickness=2)
     i+=1
     video_writer.write(frame)
 
