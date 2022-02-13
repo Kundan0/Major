@@ -104,8 +104,8 @@ while(video.isOpened()):
         print("depth0",depth0)
         print("depth1",depth1)
 
-        mpimg.imsave('./mpdepth0.jpg',depth0.squeeze(0),cmap='gray')
-        mpimg.imsave('./mpdepth1.jpg',depth1.squeeze(0),cmap='gray')
+        mpimg.imsave('./mpdepth0.jpg',depth0.detach().squeeze(0).cpu(),cmap='gray')
+        mpimg.imsave('./mpdepth1.jpg',depth1.detach().squeeze(0).cpu(),cmap='gray')
         
         depth_tensor1=tr.ToTensor()(Image.open('./mpdepth0.jpg').crop((0,50,320,240)).resize((128,72)))[0]
             
