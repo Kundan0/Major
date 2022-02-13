@@ -121,11 +121,14 @@ while(video.isOpened()):
         print(of0)
         print("of shape",of0.shape)
         print(f"for of took {time()-start}")
-        of0,of1=of0[200:,:],of1[200:,:]
+        of0=tr.functional.crop(of0,left=0,top=50,height=190,width=320)
+        of1=tr.functional.crop(of1,left=0,top=50,height=190,width=320)
         
-        of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
-        of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
-    
+        of0=tr.functional.resize(of0,(72,128)).to(device=device) # size(1,72,128)
+        of1=tr.functional.resize(of1,(72,128)).to(device=device)
+        
+        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
+        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
         # ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
         # ofimage1=np.transpose(of1.cpu().numpy(),(1,2,0))
         

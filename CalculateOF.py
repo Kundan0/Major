@@ -52,7 +52,7 @@ def ret_of(image1,image2,model,device):
 
     #viz(image1, image2, flow_up)
     
-    flo = flo[0].cpu().numpy()
+    flo = flo[0].detach()
     return flo[0],flo[1]
 
 def load_RAFT(weights_path,device):
