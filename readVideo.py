@@ -109,7 +109,7 @@ while(video.isOpened()):
         
         depth_tensor1=tr.ToTensor()(Image.open('./mpdepth0.jpg').crop((0,50,320,240)).resize((128,72)))[0]
             
-        depth_tensor2=tr.ToTensor()(Image.open('./mpdepth1.jpg').crop((0,50,320,240)).resize(128,72))[0]
+        depth_tensor2=tr.ToTensor()(Image.open('./mpdepth1.jpg').crop((0,50,320,240)).resize((128,72)))[0]
 
         print("depth_tensor from saving and reading ,depth0 ",depth_tensor1,"depth1",depth_tensor2)
         
