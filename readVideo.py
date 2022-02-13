@@ -202,7 +202,8 @@ while(video.isOpened()):
             results.append((result,left,right,top,bottom))
             
             frames=[]
-        break    break
+            break    
+    break
     for value in results:
         
         result,left,right,top,bottom=value
