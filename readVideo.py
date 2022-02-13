@@ -124,7 +124,7 @@ while(video.isOpened()):
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         print("saving")
     
-        print("depth_tensor directly processed ,depth0 ",depth_tensor1,"depth1",depth_tensor2)
+        print("depth_tensor directly processed ,depth0 ",depth0,"depth1",depth1)
         
 
         #of processing 
@@ -134,8 +134,8 @@ while(video.isOpened()):
         print(f"for of took {time()-start}")
         of0,of1=of0[200:,:],of1[200:,:]
         print("after cropping of0 shape",of0.shape)
-        cv2.imwrite('./of0.jpg',of0)
-        cv2.imwrite('./of1.jpg',of1)
+        # cv2.imwrite('./of0.jpg',of0)
+        # cv2.imwrite('./of1.jpg',of1)
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)
         of0,of1=torch.from_numpy(of0).to(device=device).unsqueeze(0),torch.from_numpy(of1).to(device=device).unsqueeze(0)
     
@@ -178,7 +178,7 @@ while(video.isOpened()):
                 bbox_mask[top_bbox:bottom_bbox,left_bbox:right_bbox]=ones
         
             
-            cv2.imwrite('bbox',bbox_mask.cpu().numpy())
+            #cv2.imwrite('bbox',bbox_mask.cpu().numpy())
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
@@ -202,7 +202,7 @@ while(video.isOpened()):
             results.append((result,left,right,top,bottom))
             
             frames=[]
-            break
+        break    break
     for value in results:
         
         result,left,right,top,bottom=value
