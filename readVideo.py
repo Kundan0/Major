@@ -99,15 +99,18 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
-        depth1=ret_depth(frames[1],depth_model,device)
-        print("returned depth",depth0)
-
-        depth0=tr.ToTensor()(tr.ToPILImage()(depth0.detach().cpu()))
-        print("reading from PIL",depth0)
-        mpimg.imsave('./mpdepth0.jpg',depth0.detach().squeeze(0).cpu(),cmap='gray')
-        mpimg.imsave('./mpdepth1.jpg',depth1.detach().squeeze(0).cpu(),cmap='gray')
+        depthorg0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
+        depthorg1=ret_depth(frames[1],depth_model,device)
         
+
+        depth0=tr.ToTensor()(tr.ToPILImage()(depthorg0.detach().cpu())).to(device)
+        depth1=tr.ToTensor()(tr.ToPILImage()(depthorg1.detach().cpu())).to(device)
+        
+        mpimg.imsave('./mpdepth0.jpg',depthorg0.detach().squeeze(0).cpu(),cmap='gray')
+        mpimg.imsave('./mpdepth1.jpg',depthorg1.detach().squeeze(0).cpu(),cmap='gray')
+        
+
+
         depth_tensor1=tr.ToTensor()(Image.open('./mpdepth0.jpg').crop((0,50,320,240)).resize((128,72)))[0]
             
         depth_tensor2=tr.ToTensor()(Image.open('./mpdepth1.jpg').crop((0,50,320,240)).resize((128,72)))[0]
@@ -124,6 +127,11 @@ while(video.isOpened()):
         depth0=tr.functional.resize(depth0,(72,128)).to(device=device) # size(1,72,128)
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         
+
+        print("directly processed ")
+        print(depth0)
+
+        print("difference ",depth0-depth_tensor1.to(device)
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
