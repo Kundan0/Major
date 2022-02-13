@@ -102,15 +102,17 @@ while(video.isOpened()):
         depthorg0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depthorg1=ret_depth(frames[1],depth_model,device)
         
-
+        
         depth0=tr.ToTensor()(tr.ToPILImage()(depthorg0.detach().cpu())).to(device)
         depth1=tr.ToTensor()(tr.ToPILImage()(depthorg1.detach().cpu())).to(device)
-        print("pil to tensor ",depth0,"depth 1",depth1)
+
+        print("pil to tensor ",depth0,"depth 1",depth1.shape,"depth00",depth0[0])
         mpimg.imsave('./mpdepth0.jpg',depthorg0.detach().squeeze(0).cpu(),cmap='gray')
         mpimg.imsave('./mpdepth1.jpg',depthorg1.detach().squeeze(0).cpu(),cmap='gray')
-        print("depth_tensor1",tr.ToTensor()(Image.open('./mpdepth0.jpg'))[0])
+        depth_tensor1=tr.ToTensor()(Image.open('./mpdepth0.jpg'))[0]
+        print("depth_tensor1",depth_tensor1)
             
-        print("depth_tensor2",tr.ToTensor()(Image.open('./mpdepth1.jpg'))[0])
+        print("depth_tensor2 size",tr.ToTensor()(Image.open('./mpdepth1.jpg')).shape)
         
 
 
