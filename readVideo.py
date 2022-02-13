@@ -201,8 +201,8 @@ while(video.isOpened()):
             results.append((result,left,right,top,bottom))
             
             frames=[]
-            break    
-        break
+              
+        
     for value in results:
         
         result,left,right,top,bottom=value
@@ -212,7 +212,7 @@ while(video.isOpened()):
         cv2.rectangle(frame,(left,top),(right,bottom),color=RECT_COLOR_BBOX,thickness=2)
         cv2.putText(frame,"V "+str((round(velocity_f.item(),2),round(velocity_s.item(),2))),(left,top-40),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
         cv2.putText(frame,"P "+str((round(position_f.item(),2),round(position_s.item(),2))),(left,top-20),cv2.FONT_HERSHEY_SIMPLEX,0.4,TEXT_COLOR,1,cv2.LINE_AA)
-        cv2.rectangle(frame,(ROI[0],ROI[2]),(ROI[1],ROI[3]),color=RECT_COLOR_ROI,thickness=2)
+    cv2.rectangle(frame,(600,360),(1270,715),color=RECT_COLOR_ROI,thickness=2)
     i+=1
     video_writer.write(frame)
 
