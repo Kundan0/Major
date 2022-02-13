@@ -66,6 +66,7 @@ RECT_COLOR_ROI=(0,255,0)
 TEXT_COLOR=(0,255,255)
 
 
+
 #Checking if the video is loaded successfully
 
 if (video.isOpened()):
@@ -143,7 +144,7 @@ while(video.isOpened()):
 
         # vehicle identification
         
-        bbox=ret_bbox([frames[0]],tracker_model,0.3,ROI)[0]
+        bbox=ret_bbox([frames[0]],tracker_model,ROI,0.5)[0]
         num_vehicles=len(bbox)
         print(f"found {num_vehicles} no of vehicles")
         results=[]
