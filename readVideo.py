@@ -118,6 +118,9 @@ while(video.isOpened()):
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
+        mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
+        
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
         print(of0)
@@ -129,8 +132,6 @@ while(video.isOpened()):
         of0=tr.functional.resize(of0,(72,128)).to(device=device) # size(1,72,128)
         of1=tr.functional.resize(of1,(72,128)).to(device=device)
         
-        mpimg.imsave('./of0.jpg',of0[0].cpu(),cmap='gray')
-        mpimg.imsave('./of1.jpg',of1[0].cpu(),cmap='gray')
         # ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
         # ofimage1=np.transpose(of1.cpu().numpy(),(1,2,0))
         
