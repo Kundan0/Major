@@ -101,7 +101,7 @@ while(video.isOpened()):
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
 
-        print("depth0",depth0)
+        print("depth0 numpy conversion",depth0.detach().squeeze(0).cpu().numpy())
         print("depth1",depth1)
 
         mpimg.imsave('./mpdepth0.jpg',depth0.detach().squeeze(0).cpu(),cmap='gray')
@@ -126,7 +126,7 @@ while(video.isOpened()):
     
         print("depth_tensor directly processed ,depth0 ",depth0,"depth1",depth1)
         
-
+        print("difference depth0",depth0-depth_tensor1.)
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
