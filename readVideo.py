@@ -118,7 +118,7 @@ while(video.isOpened()):
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
-        of0=of0.unsquueze(0)
+        of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
         print(of0)
         print("of shape",of0.shape)
