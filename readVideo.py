@@ -11,7 +11,8 @@ import torchvision.transforms as tr
 import torch
 from sys import exit
 from time import time
-
+import matplotlib.image as mpimg
+import PIL.Image as Image
 #device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -43,7 +44,7 @@ print("reading video information")
 
 
 #video 
-file_path='./download.mp4'
+file_path='./imgs_video.avi'
 output_file_name='./output.avi'
 video=cv2.VideoCapture(file_path)
 frame_width = int(video.get(3))
@@ -99,24 +100,40 @@ while(video.isOpened()):
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
+
         print("depth0",depth0)
         print("depth1",depth1)
-        depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
-        depthimg1=np.transpose(depth1.cpu().numpy(),(1,2,0))
-        cv2.imwrite('./depth0.jpg',depthimg0)
-        cv2.imwrite('./depth1.jpg',depthimg1)
+
+        mpimg.imsave('./mpdepth0.jpg',depth0.squeeze(0),cmap='gray')
+        mpimg.imsave('./mpdepth1.jpg',depth1.squeeze(0),cmap='gray')
+        
+        depth_tensor1=tr.ToTensor()(Image.open('./mpdepth0.jpg').crop((0,50,320,240)).resize((128,72)))[0]
+            
+        depth_tensor2=tr.ToTensor()(Image.open('./mpdepth1.jpg').crop((0,50,320,240)).resize(128,72))[0]
+
+        print("depth_tensor from saving and reading ,depth0 ",depth_tensor1,"depth1",depth_tensor2)
+        
+        # depthimg0=np.transpose(depth0.cpu().numpy(),(1,2,0))
+        # depthimg1=np.transpose(depth1.cpu().numpy(),(1,2,0))
+        # cv2.imwrite('./depth0.jpg',depthimg0)
+        # cv2.imwrite('./depth1.jpg',depthimg1)
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
         depth0=tr.functional.resize(depth0,(72,128)).to(device=device) # size(1,72,128)
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         print("saving")
+    
+        print("depth_tensor directly processed ,depth0 ",depth_tensor1,"depth1",depth_tensor2)
         
+
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        print("of shape",of0.shape)
         print(f"for of took {time()-start}")
-        of0,of1=of0[50:,:],of1[50:,:]
+        of0,of1=of0[200:,:],of1[200:,:]
+        print("after cropping of0 shape",of0.shape)
         cv2.imwrite('./of0.jpg',of0)
         cv2.imwrite('./of1.jpg',of1)
         of0,of1=cv2.resize(of0,size),cv2.resize(of1,size)

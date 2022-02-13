@@ -57,11 +57,12 @@ def load_ADA(pretrained,device):
 if __name__=="__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    pretrained = "/home/kundan/Documents/Major/AdaBins/pretrained/AdaBins_kitti.pt"
+    pretrained = "./AdaBins_kitti.pt"
     model=load_ADA(pretrained,device)
-    imgs=['./sample2.png']
+    imgs=['./001.jpg']
 
     depth=ret_depth(imgs[0],model) #  
+    print(depth)
     # print(depth.detach().size())
     # mpimg.imsave('./depth2.jpg',depth.detach(),cmap='gray')
 
