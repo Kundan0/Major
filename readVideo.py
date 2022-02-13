@@ -13,6 +13,7 @@ from sys import exit
 from time import time
 import matplotlib.image as mpimg
 import PIL.Image as Image
+
 #device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -100,10 +101,10 @@ while(video.isOpened()):
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
+        print("returned depth",depth0)
 
-        print("depth0 numpy conversion",depth0.detach().squeeze(0).cpu().numpy())
-        print("depth1",depth1)
-
+        depth0=tr.ToTensor()(tr.ToPILImage()(depth0.detach().cpu()))
+        print("reading from PIL",depth0)
         mpimg.imsave('./mpdepth0.jpg',depth0.detach().squeeze(0).cpu(),cmap='gray')
         mpimg.imsave('./mpdepth1.jpg',depth1.detach().squeeze(0).cpu(),cmap='gray')
         
@@ -122,11 +123,7 @@ while(video.isOpened()):
         
         depth0=tr.functional.resize(depth0,(72,128)).to(device=device) # size(1,72,128)
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
-        print("saving")
-    
-        print("depth_tensor directly processed ,depth0 ",depth0,"depth1",depth1)
         
-        print("difference depth0",depth0-depth_tensor1.to(device))
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
