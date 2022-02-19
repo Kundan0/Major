@@ -234,6 +234,7 @@ while(video.isOpened()):
             results.append((result,left,right,top,bottom))
             result=None
             frames=[]
+            torch.cuda.memory_summary(device=None, abbreviated=False)
             
         
     for value in results:
