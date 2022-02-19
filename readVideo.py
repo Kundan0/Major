@@ -118,7 +118,7 @@ while(video.isOpened()):
         print("tensor ",depth0)
         
 
-        mpimg.imsave('./depth0.jpg',depth0.squeeze(0),cmap='gray')
+        mpimg.imsave('./depth0.jpg',depth0.squeeze(0).detach().cpu(),cmap='gray')
         #mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
         depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
         print("mean value of tensor after reading the image ",torch.mean(depthimg))
@@ -145,8 +145,8 @@ while(video.isOpened()):
         print("std ",torch.std(torch.tensor(of0)))
         print("maximum value ",torch.max(of0))
         print("minimum value ",torch.min(of0))
-        mpimg.imsave('./of0.jpg',of0.cpu()/255.,cmap='gray')
-        mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
+        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
+        mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
         ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
         print("mean value of tensor after reading the image ",torch.mean(ofimg))
         print("std ",torch.std(ofimg))
