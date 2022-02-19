@@ -125,6 +125,8 @@ while(video.isOpened()):
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
         print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
         print("std ",torch.std(torch.tensor(of0)))
+        print("maximum value ",torch.max(of0))
+        print("minimum value ",torch.min(of0))
         mpimg.imsave('./of0.jpg',of0.cpu()/255.,cmap='gray')
         mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
         ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
@@ -183,6 +185,7 @@ while(video.isOpened()):
             
             #cv2.imwrite('bbox',bbox_mask.cpu().numpy())
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
+            depth0,depth1,of0,of1=None,None,None,None
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
             if area<2500:
