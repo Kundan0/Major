@@ -107,12 +107,23 @@ while(video.isOpened()):
         
         depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
         depth1=ret_depth(frames[1],depth_model,device)
+        depth0=(depth0-torch.min(depth0))/(torch.max(depth0)-torch.min(depth0))
+        depth1=(depth1-torch.min(depth1))/(torch.max(depth1)-torch.min(depth1))
+       
         print('.....depth..... ')
         print("mean value of tensor before reading the image ",torch.mean((depth0)))
         print("std ",torch.std((depth0)))
         print("maximum value ",torch.max(depth0))
         print("minimum value ",torch.min(depth0))
+        print("tensor ",depth0)
         
+
+        mpimg.imsave('./depth0.jpg',depth0,cmap='gray')
+        #mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
+        depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
+        print("mean value of tensor after reading the image ",torch.mean(depthimg))
+        print("std ",torch.std(depthimg))
+        print("after reading from the image ",depthimg)
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
@@ -141,7 +152,8 @@ while(video.isOpened()):
         print("std ",torch.std(ofimg))
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
-        print(of0)
+        print("original of ",of0)
+        print("read from image ",ofimg)
         print("of shape",of0.shape)
         print(f"for of took {time()-start}")
 
