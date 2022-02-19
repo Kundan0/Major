@@ -105,8 +105,8 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
-        depth1=ret_depth(frames[1],depth_model,device)
+        depth0=ret_depth(frames[0],depth_model.to(device),device) # torch.size([1,240,320])
+        depth1=ret_depth(frames[1],depth_model.to(device),device)
         depth0=(depth0-torch.min(depth0))/(torch.max(depth0)-torch.min(depth0))
         depth1=(depth1-torch.min(depth1))/(torch.max(depth1)-torch.min(depth1))
        
@@ -127,8 +127,8 @@ while(video.isOpened()):
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
-        depth0=tr.functional.resize(depth0,(72,128)).to(device=device) # size(1,72,128)
-        depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
+        depth0=tr.functional.resize(depth0,(72,128))#.to(device=device) # size(1,72,128)
+        depth1=tr.functional.resize(depth1,(72,128))#.to(device=device)
         
 
         print("original depth 0",depth0)
@@ -137,7 +137,7 @@ while(video.isOpened()):
         
         #of processing 
         start=time()
-        of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        of0,of1=ret_of(frames[0],frames[1],of_model.to(device),device)
         # of0=torch.tensor(of0)
         # of1=torch.tensor(of1)
         of0=(of0-torch.min(of0))/(torch.max(of0)-torch.min(of0))
@@ -161,8 +161,8 @@ while(video.isOpened()):
         of0=tr.functional.crop(of0,left=0,top=50,height=520,width=1280)
         of1=tr.functional.crop(of1,left=0,top=50,height=520,width=1280)
         
-        of0=tr.functional.resize(of0,(72,128)).to(device=device) # size(1,72,128)
-        of1=tr.functional.resize(of1,(72,128)).to(device=device)
+        of0=tr.functional.resize(of0,(72,128))#.to(device=device) # size(1,72,128)
+        of1=tr.functional.resize(of1,(72,128))#.to(device=device)
         print("original of 0",of0)
         print("original of 1",of1)
         # ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
@@ -234,7 +234,7 @@ while(video.isOpened()):
             results.append((result,left,right,top,bottom))
             result=None
             frames=[]
-            torch.cuda.memory_summary(device=None, abbreviated=False)
+            print(torch.cuda.memory_summary(device=None, abbreviated=False))
             
         
     for value in results:

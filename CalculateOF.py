@@ -73,7 +73,7 @@ def load_RAFT(weights_path,device):
     #weights_path = '.archive/raft-things.pth'
 
     ckpt = torch.load(weights_path, map_location=device)
-    model.to(device)
+    #model.to(device)
     model.load_state_dict(ckpt)
     return model
 

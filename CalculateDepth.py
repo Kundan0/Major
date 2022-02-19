@@ -51,7 +51,7 @@ def load_ADA(pretrained,device):
     
     model = UnetAdaptiveBins.build(n_bins=N_BINS, min_val=MIN_DEPTH, max_val=MAX_DEPTH_KITTI)
     model, _, _ = model_io.load_checkpoint(pretrained, model)
-    return model.to(device)
+    return model
 
 
 if __name__=="__main__":
