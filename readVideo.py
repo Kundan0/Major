@@ -110,7 +110,6 @@ while(video.isOpened()):
         
         
         
-        
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
@@ -124,14 +123,19 @@ while(video.isOpened()):
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
+        print("std ",torch.std(torch.tensor(of0)))
         mpimg.imsave('./of0.jpg',of0.cpu()/255.,cmap='gray')
         mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
-        
+        ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
+        print("mean value of tensor after reading the image ",torch.mean(ofimg))
+        print("std ",torch.std(ofimg))
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
         print(of0)
         print("of shape",of0.shape)
         print(f"for of took {time()-start}")
+
         of0=tr.functional.crop(of0,left=0,top=50,height=190,width=320)
         of1=tr.functional.crop(of1,left=0,top=50,height=190,width=320)
         
