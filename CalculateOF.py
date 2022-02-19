@@ -48,7 +48,7 @@ def ret_of(image1,image2,model,device):
     padder = InputPadder(image1.shape)
     image1, image2 = padder.pad(image1, image2)
     with torch.no_grad():
-        _, flo = model(image1, image2, iters=20, test_mode=True)
+        _, flo = model.to(device)(image1, image2, iters=20, test_mode=True)
 
     #viz(image1, image2, flow_up)
     

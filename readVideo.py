@@ -105,8 +105,8 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model.to(device),device) # torch.size([1,240,320])
-        depth1=ret_depth(frames[1],depth_model.to(device),device)
+        depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
+        depth1=ret_depth(frames[1],depth_model,device)
         depth0=(depth0-torch.min(depth0))/(torch.max(depth0)-torch.min(depth0))
         depth1=(depth1-torch.min(depth1))/(torch.max(depth1)-torch.min(depth1))
        
@@ -137,7 +137,7 @@ while(video.isOpened()):
         
         #of processing 
         start=time()
-        of0,of1=ret_of(frames[0],frames[1],of_model.to(device),device)
+        of0,of1=ret_of(frames[0],frames[1],of_model,device)
         # of0=torch.tensor(of0)
         # of1=torch.tensor(of1)
         of0=(of0-torch.min(of0))/(torch.max(of0)-torch.min(of0))
@@ -214,16 +214,20 @@ while(video.isOpened()):
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
             if area<2500:
-                result=type1_model(inter_tensor)
+                with torch.no_grad():
+                    result=type1_model(inter_tensor)
                 
             elif area>=2500 and area<5000:
-                result=type2_model(inter_tensor)
+                with torch.no_grad():
+                    result=type2_model(inter_tensor)
                 
             elif area>=5000 and area < 7500:
-                result=type3_model(inter_tensor)
+                with torch.no_grad():
+                    result=type3_model(inter_tensor)
                 
             elif area >7500:
-                result=type4_model(inter_tensor)
+                with torch.no_grad():
+                    result=type4_model(inter_tensor)
             
             
             inter_tensor=None
