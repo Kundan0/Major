@@ -129,7 +129,7 @@ while(video.isOpened()):
         # of0=torch.tensor(of0)
         # of1=torch.tensor(of1)
         of0=(of0-torch.min(of0))/(torch.max(of0)-torch.min(of0))
-        of1=(of1-np.min(of1))/(np.max(of1)-np.min(of1))
+        of1=(of1-torch.min(of1))/(torch.max(of1)-torch.min(of1))
         print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
         print("std ",torch.std(torch.tensor(of0)))
         print("maximum value ",torch.max(of0))
