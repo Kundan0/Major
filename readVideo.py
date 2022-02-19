@@ -105,10 +105,13 @@ while(video.isOpened()):
         frames.append(frame)
         #depth processing
         
-        depth0=ret_depth(frames[0],depth_model,device)/255. # torch.size([1,240,320])
-        depth1=ret_depth(frames[1],depth_model,device)/255.
-        
-        
+        depth0=ret_depth(frames[0],depth_model,device) # torch.size([1,240,320])
+        depth1=ret_depth(frames[1],depth_model,device)
+    
+        print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
+        print("std ",torch.std(torch.tensor(of0)))
+        print("maximum value ",torch.max(of0))
+        print("minimum value ",torch.min(of0))
         
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
@@ -123,6 +126,8 @@ while(video.isOpened()):
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
+        of0=(of0-np.min(of0))/(np.max(of0)-np.min(of0))
+        of1=(of1-np.min(of1))/(np.max(of1)-np.min(of1))
         print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
         print("std ",torch.std(torch.tensor(of0)))
         print("maximum value ",torch.max(of0))
