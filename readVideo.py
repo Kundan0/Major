@@ -206,11 +206,11 @@ while(video.isOpened()):
             
             #cv2.imwrite('bbox',bbox_mask.cpu().numpy())
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
-            del depth0
-            del of0
-            del of1
-            del depth1
-            torch.cuda.empty_cache()
+            depth0=None
+            depth1=None
+            of0=None
+            of1=None
+            bbox_mask=None
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
             if area<2500:
@@ -224,15 +224,15 @@ while(video.isOpened()):
                 
             elif area >7500:
                 result=type4_model(inter_tensor)
-                
             
-            del inter_tensor
-            torch.cuda.empty_cache()
+            
+            inter_tensor=None
+            
             
             result=result.squeeze(0)
             print("result",result)
             results.append((result,left,right,top,bottom))
-            
+            result=None
             frames=[]
             
         
