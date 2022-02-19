@@ -158,8 +158,8 @@ while(video.isOpened()):
         print("of shape",of0.shape)
         print(f"for of took {time()-start}")
 
-        of0=tr.functional.crop(of0,left=0,top=200,height=520,width=1280)
-        of1=tr.functional.crop(of1,left=0,top=200,height=520,width=1280)
+        of0=tr.functional.crop(of0,left=0,top=50,height=520,width=1280)
+        of1=tr.functional.crop(of1,left=0,top=50,height=520,width=1280)
         
         of0=tr.functional.resize(of0,(72,128)).to(device=device) # size(1,72,128)
         of1=tr.functional.resize(of1,(72,128)).to(device=device)
@@ -210,6 +210,7 @@ while(video.isOpened()):
             del of0
             del of1
             del depth1
+            torch.cuda.empty_cache()
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
             if area<2500:
@@ -226,6 +227,7 @@ while(video.isOpened()):
                 
             
             del inter_tensor
+            torch.cuda.empty_cache()
             
             result=result.squeeze(0)
             print("result",result)
