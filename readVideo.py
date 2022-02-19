@@ -110,20 +110,20 @@ while(video.isOpened()):
         depth0=(depth0-torch.min(depth0))/(torch.max(depth0)-torch.min(depth0))
         depth1=(depth1-torch.min(depth1))/(torch.max(depth1)-torch.min(depth1))
        
-        print('.....depth..... ')
-        print("mean value of tensor before reading the image ",torch.mean((depth0)))
-        print("std ",torch.std((depth0)))
-        print("maximum value ",torch.max(depth0))
-        print("minimum value ",torch.min(depth0))
-        print("tensor ",depth0)
+        # print('.....depth..... ')
+        # print("mean value of tensor before reading the image ",torch.mean((depth0)))
+        # print("std ",torch.std((depth0)))
+        # print("maximum value ",torch.max(depth0))
+        # print("minimum value ",torch.min(depth0))
+        # print("tensor ",depth0)
         
 
-        mpimg.imsave('./depth0.jpg',depth0.squeeze(0).detach().cpu(),cmap='gray')
+        #mpimg.imsave('./depth0.jpg',depth0.squeeze(0).detach().cpu(),cmap='gray')
         #mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
-        depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
-        print("mean value of tensor after reading the image ",torch.mean(depthimg))
-        print("std ",torch.std(depthimg))
-        print("after reading from the image ",depthimg)
+        #depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
+        # print("mean value of tensor after reading the image ",torch.mean(depthimg))
+        # print("std ",torch.std(depthimg))
+        # print("after reading from the image ",depthimg)
         depth0=tr.functional.crop(depth0,left=0,top=50,height=190,width=320)
         depth1=tr.functional.crop(depth1,left=0,top=50,height=190,width=320)
         
@@ -141,24 +141,24 @@ while(video.isOpened()):
         # of1=torch.tensor(of1)
         of0=(of0-torch.min(of0))/(torch.max(of0)-torch.min(of0))
         of1=(of1-torch.min(of1))/(torch.max(of1)-torch.min(of1))
-        print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
-        print("std ",torch.std(torch.tensor(of0)))
-        print("maximum value ",torch.max(of0))
-        print("minimum value ",torch.min(of0))
-        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
-        mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
-        ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
-        print("mean value of tensor after reading the image ",torch.mean(ofimg))
-        print("std ",torch.std(ofimg))
+        # print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
+        # print("std ",torch.std(torch.tensor(of0)))
+        # print("maximum value ",torch.max(of0))
+        # print("minimum value ",torch.min(of0))
+        # mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
+        # mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
+        # ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
+        # print("mean value of tensor after reading the image ",torch.mean(ofimg))
+        # print("std ",torch.std(ofimg))
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
-        print("original of ",of0)
-        print("read from image ",ofimg)
-        print("of shape",of0.shape)
+        # print("original of ",of0)
+        # print("read from image ",ofimg)
+        # print("of shape",of0.shape)
         print(f"for of took {time()-start}")
 
-        of0=tr.functional.crop(of0,left=0,top=50,height=190,width=320)
-        of1=tr.functional.crop(of1,left=0,top=50,height=190,width=320)
+        of0=tr.functional.crop(of0,left=0,top=200,height=520,width=1280)
+        of1=tr.functional.crop(of1,left=0,top=200,height=520,width=1280)
         
         of0=tr.functional.resize(of0,(72,128)).to(device=device) # size(1,72,128)
         of1=tr.functional.resize(of1,(72,128)).to(device=device)
@@ -204,7 +204,10 @@ while(video.isOpened()):
             
             #cv2.imwrite('bbox',bbox_mask.cpu().numpy())
             inter_tensor=torch.cat((depth0,of0,of1,depth1,bbox_mask.unsqueeze(0)),dim=0).permute(0,2,1).unsqueeze(0)
-            depth0,depth1,of0,of1=None,None,None,None
+            del depth0
+            del of0
+            del of1
+            del depth1
             print('in readvideo before sending to model',inter_tensor.shape)
             print("area of vehicle",area)
             if area<2500:
@@ -220,7 +223,7 @@ while(video.isOpened()):
                 result=type4_model(inter_tensor)
                 
             
-            
+            del inter_tensor
             
             result=result.squeeze(0)
             print("result",result)
