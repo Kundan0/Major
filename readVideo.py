@@ -30,13 +30,13 @@ tracker_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 #Vehicle velocity and position estimation model
 print("building type1")
-type1_model=myModel('1',os.path.join(".","State","trained1")).to(device)
+type1_model=myModel('1',os.path.join(".","State","trained1"))
 #type1_model.load_model()
 print("building type2")
-type2_model=myModel('2',os.path.join(".","State","trained2")).to(device)
+type2_model=myModel('2',os.path.join(".","State","trained2"))
 #type2_model.load_model()
 print("building type3")
-type3_model=myModel('3',os.path.join(".","State","trained3")).to(device)
+type3_model=myModel('3',os.path.join(".","State","trained3"))
 #type3_model.load_model()
 print("building type4")
 type4_model=myModel('4',"./trained4").to(device)
@@ -118,9 +118,9 @@ while(video.isOpened()):
         # print("tensor ",depth0)
         
 
-        #mpimg.imsave('./depth0.jpg',depth0.squeeze(0).detach().cpu(),cmap='gray')
-        #mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
-        #depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
+        # mpimg.imsave('./depth0.jpg',depth0.squeeze(0).detach().cpu(),cmap='gray')
+        # mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
+        # depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
         # print("mean value of tensor after reading the image ",torch.mean(depthimg))
         # print("std ",torch.std(depthimg))
         # print("after reading from the image ",depthimg)
@@ -131,7 +131,8 @@ while(video.isOpened()):
         depth1=tr.functional.resize(depth1,(72,128)).to(device=device)
         
 
-        
+        print("original depth 0",depth0)
+        print("original depth 1",depth1)
 
         
         #of processing 
@@ -145,15 +146,15 @@ while(video.isOpened()):
         print("std ",torch.std(torch.tensor(of0)))
         print("maximum value ",torch.max(of0))
         print("minimum value ",torch.min(of0))
-        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
-        mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
-        ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
-        print("mean value of tensor after reading the image ",torch.mean(ofimg))
-        print("std ",torch.std(ofimg))
+        # mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
+        # mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
+        # ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
+        # print("mean value of tensor after reading the image ",torch.mean(ofimg))
+        # print("std ",torch.std(ofimg))
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
-        print("original of ",of0)
-        print("read from image ",ofimg)
+        
+        # print("read from image ",ofimg)
         print("of shape",of0.shape)
         print(f"for of took {time()-start}")
 
@@ -162,7 +163,8 @@ while(video.isOpened()):
         
         of0=tr.functional.resize(of0,(72,128)).to(device=device) # size(1,72,128)
         of1=tr.functional.resize(of1,(72,128)).to(device=device)
-        
+        print("original of 0",of0)
+        print("original of 1",of1)
         # ofimage0=np.transpose(of0.cpu().numpy(),(1,2,0))
         # ofimage1=np.transpose(of1.cpu().numpy(),(1,2,0))
         
