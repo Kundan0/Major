@@ -141,20 +141,20 @@ while(video.isOpened()):
         # of1=torch.tensor(of1)
         of0=(of0-torch.min(of0))/(torch.max(of0)-torch.min(of0))
         of1=(of1-torch.min(of1))/(torch.max(of1)-torch.min(of1))
-        # print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
-        # print("std ",torch.std(torch.tensor(of0)))
-        # print("maximum value ",torch.max(of0))
-        # print("minimum value ",torch.min(of0))
-        # mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
-        # mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
-        # ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
-        # print("mean value of tensor after reading the image ",torch.mean(ofimg))
-        # print("std ",torch.std(ofimg))
+        print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
+        print("std ",torch.std(torch.tensor(of0)))
+        print("maximum value ",torch.max(of0))
+        print("minimum value ",torch.min(of0))
+        mpimg.imsave('./of0.jpg',of0.cpu(),cmap='gray')
+        mpimg.imsave('./of1.jpg',of1.cpu(),cmap='gray')
+        ofimg=tr.ToTensor()(Image.open('./of0.jpg'))
+        print("mean value of tensor after reading the image ",torch.mean(ofimg))
+        print("std ",torch.std(ofimg))
         of0=of0.unsqueeze(0)
         of1=of1.unsqueeze(0)
-        # print("original of ",of0)
-        # print("read from image ",ofimg)
-        # print("of shape",of0.shape)
+        print("original of ",of0)
+        print("read from image ",ofimg)
+        print("of shape",of0.shape)
         print(f"for of took {time()-start}")
 
         of0=tr.functional.crop(of0,left=0,top=200,height=520,width=1280)
@@ -230,7 +230,7 @@ while(video.isOpened()):
             results.append((result,left,right,top,bottom))
             
             frames=[]
-              
+            
         
     for value in results:
         
