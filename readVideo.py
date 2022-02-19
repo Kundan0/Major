@@ -118,7 +118,7 @@ while(video.isOpened()):
         print("tensor ",depth0)
         
 
-        mpimg.imsave('./depth0.jpg',depth0,cmap='gray')
+        mpimg.imsave('./depth0.jpg',depth0.squeeze(0),cmap='gray')
         #mpimg.imsave('./of1.jpg',of1.cpu()/255.,cmap='gray')
         depthimg=tr.ToTensor()(Image.open('./depth0.jpg'))
         print("mean value of tensor after reading the image ",torch.mean(depthimg))
