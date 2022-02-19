@@ -126,7 +126,9 @@ while(video.isOpened()):
         #of processing 
         start=time()
         of0,of1=ret_of(frames[0],frames[1],of_model,device)
-        of0=(of0-np.min(of0))/(np.max(of0)-np.min(of0))
+        # of0=torch.tensor(of0)
+        # of1=torch.tensor(of1)
+        of0=(of0-torch.min(of0))/(torch.max(of0)-torch.min(of0))
         of1=(of1-np.min(of1))/(np.max(of1)-np.min(of1))
         print("mean value of tensor before reading the image ",torch.mean(torch.tensor(of0)))
         print("std ",torch.std(torch.tensor(of0)))
